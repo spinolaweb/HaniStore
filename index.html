@@ -1426,6 +1426,29 @@
             // Determine effective delivery price (0 if qty>=2)
             const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
 
+            // ─── SEND ORDER TO GOOGLE SHEETS ───
+            const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTiH6A-dz5h6DfH2oYIVGH-0F-VfCO1Rc7uBEkSripubyBU8n8rGNegUyEzo5cbbZ2YQ/exec';
+
+            const payload = {
+                date: dateStr,
+                nom: customerName,
+                phone: customerPhone,
+                wilaya: wilayaText,
+                commune: baladiya,
+                produit: 'Bâche Couvert Automobile',
+                prix_produit: productPrice,
+                quantite: currentQty,
+                prix_total: total,
+                livraison: deliveryType === 'home' ? 'A Domicile' : 'Point Relais',
+                prix_livraison: effectiveDelivery,
+                delivery_type_code: deliveryType,
+                home_price: homePrice,
+                desk_price: deskPrice,
+                product_base_price: PRODUCT_BASE,
+                product_qty2_price: PRODUCT_BASE * 2,
+                free_delivery: (currentQty >= 2) ? 'Yes' : 'No'
+            };
+
             // ─── SEND ORDER TO TELEGRAM BOTS ───
             const BOT_1 = { token: '8916453850:AAEFJKHdQdIIs2kgvW6MUAouvctxMUGNFUU', chat: '6447776485' };
             const BOT_2 = { token: '8738212864:AAHJNNhi3EH1OR1wkOfYkBX-KxgjJ0y8w1o', chat: '6405258861' };
@@ -1465,8 +1488,17 @@
                 }
             }
 
-            // Send to both bots simultaneously (don't block user flow)
-            Promise.all([sendToBot(BOT_1), sendToBot(BOT_2)]);
+            // Send to Google Sheets + both Telegram bots simultaneously
+            await Promise.all([
+                fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).catch(e => console.error('Sheets failed:', e)),
+                sendToBot(BOT_1),
+                sendToBot(BOT_2)
+            ]);
 
             trackPurchase(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText);
 
