@@ -637,6 +637,7 @@
         }
     </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -1425,19 +1426,9 @@
             // Determine effective delivery price (0 if qty>=2)
             const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
 
-            // ─── SEND ORDER TO TELEGRAM BOT ───
-            const BOT_TOKEN = '8916453850:AAEFJKHdQdIIs2kgvW6MUAouvctxMUGNFUU';
-            // ⚠️ IMPORTANT: Replace with your actual Telegram chat ID
-            // Get it by messaging @userinfobot on Telegram, or visit:
-            // https://api.telegram.org/bot8916453850:AAEFJKHdQdIIs2kgvW6MUAouvctxMUGNFUU/getUpdates
-            const CHAT_ID = '6447776485';
-
-            if (CHAT_ID === '6447776485') {
-                alert('⚠️ يرجى تعيين CHAT_ID في الكود قبل استخدام التليغرام\n\nاحصل عليه من @userinfobot');
-                btn.disabled = false;
-                btn.innerHTML = '<span>✅ أتمم طلبي الآن</span>';
-                return;
-            }
+            // ─── SEND ORDER TO TELEGRAM BOTS ───
+            const BOT_1 = { token: '8916453850:AAEFJKHdQdIIs2kgvW6MUAouvctxMUGNFUU', chat: '6447776485' };
+            const BOT_2 = { token: '8738212864:AAHJNNhi3EH1OR1wkOfYkBX-KxgjJ0y8w1o', chat: '6405258861' };
 
             const deliveryTypeText = deliveryType === 'home' ? 'توصيل للمنزل 🏠' : 'التوصيل للمكتب 📦';
             const freeDeliveryText = (currentQty >= 2) ? '✅ مجاني (2+ قطع)' : effectiveDelivery.toLocaleString('fr-DZ') + ' دج';
@@ -1457,22 +1448,25 @@
 📅 <b>تاريخ الطلب:</b> ${dateStr}
             `.trim();
 
-            const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-
-            try {
-                await fetch(telegramUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: CHAT_ID,
-                        text: message,
-                        parse_mode: 'HTML'
-                    })
-                });
-            } catch (e) {
-                console.error('Telegram send failed:', e);
-                // Silent fail — don't block the user flow
+            async function sendToBot(bot) {
+                const url = `https://api.telegram.org/bot${bot.token}/sendMessage`;
+                try {
+                    await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: bot.chat,
+                            text: message,
+                            parse_mode: 'HTML'
+                        })
+                    });
+                } catch (e) {
+                    console.error('Telegram send failed for bot', bot.chat, e);
+                }
             }
+
+            // Send to both bots simultaneously (don't block user flow)
+            Promise.all([sendToBot(BOT_1), sendToBot(BOT_2)]);
 
             trackPurchase(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText);
 
