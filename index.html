@@ -636,6 +636,7 @@
             }
         }
     </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -1424,39 +1425,53 @@
             // Determine effective delivery price (0 if qty>=2)
             const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
 
-            // ─── SEND ALL DATA TO GOOGLE SHEET ───
-            // REPLACE THIS URL WITH YOUR DEPLOYED APPS SCRIPT URL
-            const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTiH6A-dz5h6DfH2oYIVGH-0F-VfCO1Rc7uBEkSripubyBU8n8rGNegUyEzo5cbbZ2YQ/exec';
+            // ─── SEND ORDER TO TELEGRAM BOT ───
+            const BOT_TOKEN = '8916453850:AAEFJKHdQdIIs2kgvW6MUAouvctxMUGNFUU';
+            // ⚠️ IMPORTANT: Replace with your actual Telegram chat ID
+            // Get it by messaging @userinfobot on Telegram, or visit:
+            // https://api.telegram.org/bot8916453850:AAEFJKHdQdIIs2kgvW6MUAouvctxMUGNFUU/getUpdates
+            const CHAT_ID = '6447776485';
 
-            const payload = {
-                date: dateStr,
-                nom: customerName,
-                phone: customerPhone,
-                wilaya: wilayaText,
-                commune: baladiya,
-                produit: 'Bâche Couvert Automobile',
-                prix_produit: productPrice,
-                quantite: currentQty,
-                prix_total: total,
-                livraison: deliveryType === 'home' ? 'A Domicile' : 'Point Relais',
-                prix_livraison: effectiveDelivery, // actual charged delivery
-                delivery_type_code: deliveryType,
-                home_price: homePrice,
-                desk_price: deskPrice,
-                product_base_price: PRODUCT_BASE,
-                product_qty2_price: PRODUCT_BASE * 2,
-                free_delivery: (currentQty >= 2) ? 'Yes' : 'No'
-            };
+            if (CHAT_ID === '6447776485') {
+                alert('⚠️ يرجى تعيين CHAT_ID في الكود قبل استخدام التليغرام\n\nاحصل عليه من @userinfobot');
+                btn.disabled = false;
+                btn.innerHTML = '<span>✅ أتمم طلبي الآن</span>';
+                return;
+            }
+
+            const deliveryTypeText = deliveryType === 'home' ? 'توصيل للمنزل 🏠' : 'التوصيل للمكتب 📦';
+            const freeDeliveryText = (currentQty >= 2) ? '✅ مجاني (2+ قطع)' : effectiveDelivery.toLocaleString('fr-DZ') + ' دج';
+
+            const message = `
+🛒 <b>طلب جديد — Bâche Couvert Automobile</b>
+
+👤 <b>الاسم الكامل:</b> ${customerName}
+📱 <b>رقم الهاتف:</b> ${customerPhone}
+📍 <b>الولاية:</b> ${wilayaText}
+🏘️ <b>البلدية:</b> ${baladiya}
+🚚 <b>نوع التوصيل:</b> ${deliveryTypeText}
+📦 <b>الكمية:</b> ${currentQty}
+💰 <b>سعر المنتج:</b> ${productPrice.toLocaleString('fr-DZ')} دج
+🚚 <b>سعر التوصيل:</b> ${freeDeliveryText}
+💵 <b>المجموع الكلي:</b> ${total.toLocaleString('fr-DZ')} دج
+📅 <b>تاريخ الطلب:</b> ${dateStr}
+            `.trim();
+
+            const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
             try {
-                await fetch(APPS_SCRIPT_URL, {
+                await fetch(telegramUrl, {
                     method: 'POST',
-                    mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
                 });
             } catch (e) {
-                // Silent fail
+                console.error('Telegram send failed:', e);
+                // Silent fail — don't block the user flow
             }
 
             trackPurchase(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText);
