@@ -1122,9 +1122,9 @@
 
         function tryLoadImage(n) {
             const img = new Image();
-            img.src = n + '.webp';
+            img.src = n + '.jpg';
             img.onload = function() {
-                carouselImages.push({src: n + '.webp', index: n});
+                carouselImages.push({src: n + '.jpg', index: n});
                 tryLoadImage(n + 1);
             };
             img.onerror = function() {
