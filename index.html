@@ -1427,27 +1427,27 @@
             const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
 
             // ─── SEND ORDER TO GOOGLE SHEETS ───
-            const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTiH6A-dz5h6DfH2oYIVGH-0F-VfCO1Rc7uBEkSripubyBU8n8rGNegUyEzo5cbbZ2YQ/exec';
+            const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwC8dHcGteq5NwOPMqpDUsMidbD_MCoxyF0LSpPIWFWdtISYaOVcXPKcN-oPRnxoCusYQ/exec';
 
             const payload = {
-                date: dateStr,
-                nom: customerName,
-                phone: customerPhone,
-                wilaya: wilayaText,
-                commune: baladiya,
-                produit: 'Bâche Couvert Automobile',
-                prix_produit: productPrice,
-                quantite: currentQty,
-                prix_total: total,
-                livraison: deliveryType === 'home' ? 'A Domicile' : 'Point Relais',
-                prix_livraison: effectiveDelivery,
-                delivery_type_code: deliveryType,
-                home_price: homePrice,
-                desk_price: deskPrice,
-                product_base_price: PRODUCT_BASE,
-                product_qty2_price: PRODUCT_BASE * 2,
-                free_delivery: (currentQty >= 2) ? 'Yes' : 'No'
-            };
+    date: dateStr,
+    nom: customerName,
+    phone: customerPhone,
+    wilaya: wilayaText,
+    commune: baladiya,
+    produit: 'Bâche Couvert Automobile',
+    prix_produit: productPrice,
+    quantite: currentQty,
+    prix_total: total,
+    livraison: deliveryType === 'home' ? 'A Domicile' : 'Point Relais',
+    prix_livraison: effectiveDelivery,
+    delivery_type_code: deliveryType,
+    sku: 'CPB',              // ← NEW: SKU for this product
+    desk_price: deskPrice,   // ← kept as-is
+    product_base_price: PRODUCT_BASE,
+    product_qty2_price: PRODUCT_BASE * 2,
+    free_delivery: (currentQty >= 2) ? 'Yes' : 'No'
+};
 
             // ─── SEND ORDER TO TELEGRAM BOTS ───
             const BOT_1 = { token: '8916453850:AAEFJKHdQdIIs2kgvW6MUAouvctxMUGNFUU', chat: '6447776485' };
@@ -1463,6 +1463,7 @@
 📱 <b>رقم الهاتف:</b> ${customerPhone}
 📍 <b>الولاية:</b> ${wilayaText}
 🏘️ <b>البلدية:</b> ${baladiya}
+🏷️ <b>SKU:</b> CPB
 🚚 <b>نوع التوصيل:</b> ${deliveryTypeText}
 📦 <b>الكمية:</b> ${currentQty}
 💰 <b>سعر المنتج:</b> ${productPrice.toLocaleString('fr-DZ')} دج
