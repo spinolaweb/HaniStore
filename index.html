@@ -775,6 +775,7 @@
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -923,7 +924,7 @@
                         البلدية <span class="required-star">*</span>
                     </label>
                     <select id="baladiya" class="form-select" disabled>
-                        <option value="">-- اختر الولاية أولاً --</option>
+                        <option value="">-- اختر الولاية أولاّ --</option>
                     </select>
                     <div class="field-error" id="baladiyaErr">يرجى اختيار البلدية</div>
                 </div>
@@ -1104,8 +1105,16 @@
         }
 
         // ─────────────────────────────────────────────────────────────
-        //  REAL PHOTOS CAROUSEL
+        //  REAL PHOTOS CAROUSEL — CLOUDINARY CDN IMAGES
         // ─────────────────────────────────────────────────────────────
+
+        // Cloudinary URLs with f_auto,q_auto for automatic WebP/AVIF optimization
+        const CLOUDINARY_IMAGES = [
+            'https://res.cloudinary.com/dpgefdkek/image/upload/f_auto,q_auto/v1781910990/1_gdzjc7.jpg',
+            'https://res.cloudinary.com/dpgefdkek/image/upload/f_auto,q_auto/v1781910990/5_a1q8ao.jpg',
+            'https://res.cloudinary.com/dpgefdkek/image/upload/f_auto,q_auto/v1781910990/3_cyweg9.jpg',
+            'https://res.cloudinary.com/dpgefdkek/image/upload/f_auto,q_auto/v1781910989/4_fk4ghx.jpg'
+        ];
 
         let carouselImages = [];
         let currentSlide = 0;
@@ -1118,28 +1127,13 @@
             carouselDotsEl = document.getElementById('carouselDots');
             carouselCounterEl = document.getElementById('carouselCounter');
             if (!carouselTrackEl) return;
-            tryLoadImage(1);
-        }
 
-        function tryLoadImage(n) {
-            const img = new Image();
-            img.src = n + '.webp';
-            img.onload = function() {
-                carouselImages.push({src: n + '.webp', index: n});
-                tryLoadImage(n + 1);
-            };
-            img.onerror = function() {
-                if (carouselImages.length === 0) {
-                    document.getElementById('realPhotos').style.display = 'none';
-                    return;
-                }
-                buildCarousel();
-            };
+            // Use Cloudinary images directly
+            carouselImages = CLOUDINARY_IMAGES.map((src, i) => ({ src: src, index: i + 1 }));
+            buildCarousel();
         }
 
         function buildCarousel() {
-            carouselImages.sort((a, b) => a.index - b.index);
-
             carouselTrackEl.innerHTML = carouselImages.map((img, i) => `
                 <div class="carousel-slide" data-index="${i}" style="transform: translateX(${(0 - i) * 100}%)">
                     <img src="${img.src}" alt="صورة حقيقية للمنتج ${img.index}" loading="lazy" draggable="false" />
@@ -1234,12 +1228,12 @@
                 'بن ناصر بن شهرة', 'تاجرونة', 'تاجموت', 'تاويالة', 'حاسي الدلاعة', 'حاسي الرمل', 'سبقاق', 'سيدي بوزيد',
                 'سيدي مخلوف', 'عين سيدي علي', 'عين ماضي', 'قصر الحيران', 'قلتة سيدي سعد', 'وادي مرة', 'وادي مزي'
             ],
-            '4': ['أم البواقي', 'أولاد حملة', 'أولاد زواي', 'أولاد قاسم', 'البلالة', 'الجازية', 'الحرملية', 'الرحية',
+            '4': ['أم البواقي', 'أولاد حملة', 'أولد زواي', 'أولاد قاسم', 'البلالة', 'الجازية', 'الحرملية', 'الرحية',
                 'الزرق', 'الضلعة', 'العامرية', 'الفجوج بوغرارة سعودي', 'بئر الشهداء', 'بحير الشرقي', 'بريش', 'سوق نعمان',
                 'سيقوس', 'عين البيضاء', 'عين الديس', 'عين الزيتون', 'عين ببوش', 'عين فكرون', 'عين كرشة', 'عين مليلة',
                 'فكيرينة', 'قصر الصباحي', 'مسكيانة', 'هنشير تومغني', 'وادي نيني'
             ],
-            '5': ['أريس', 'أولاد سلام', 'أولاد سي سليمان', 'أولاد عمار', 'أولاد عوف', 'أولاد فاضل', 'إشمول', 'إمدوكل',
+            '5': ['أريس', 'أولاد سلام', 'أولد سي سليمان', 'أولاد عمار', 'أولاد عوف', 'أولاد فاضل', 'إشمول', 'إمدوكل',
                 'إينوغيسن', 'الجزار', 'الحاسي', 'الرحبات', 'الشمرة', 'القصبات', 'القيقبة', 'المعذر', 'باتنة', 'بريكة',
                 'بني فضالة الحقانية', 'بوزينة', 'بولهيلات', 'بومقر', 'بومية', 'بيطام', 'تازولت', 'تاكسلانت', 'تالخمت',
                 'تغرغار', 'تكوت', 'تيغانمين', 'تيلاطو', 'تيمقاد', 'ثنية العابد', 'جرمة', 'حيدوسة', 'رأس العيون',
@@ -1318,7 +1312,7 @@
                 'بودريعة بني ياجيس', 'بوراوي بلهادف', 'بوسيف أولاد عسكر', 'تاكسنة', 'جيجل', 'جيملة', 'خيري واد عجول',
                 'زيامة منصورية', 'سلمى بن زيادة', 'سيدي عبد العزيز', 'سيدي معروف', 'غبالة', 'قاوس', 'وجانة'
             ],
-            '19': ['أوريسيا', 'أولاد تبان', 'أولاد سي أحمد', 'أولاد صابر', 'أولاد عدوان', 'أيت نوال مزادة', 'التلة', 'الحامة',
+            '19': ['أوريسيا', 'أولاد تبان', 'أولد سي أحمد', 'أولاد صابر', 'أولاد عدوان', 'أيت نوال مزادة', 'التلة', 'الحامة',
                 'الدهامشة', 'الرصفة', 'الطاية', 'العلمة', 'الولجة', 'ايت تيزي', 'بئر العرش', 'بئر حدادة', 'بابور',
                 'بازر سكرة', 'بلاعة', 'بني شبانة', 'بني عزيز', 'بني فودة', 'بني موحلي', 'بني ورتيلان', 'بني وسين',
                 'بوسلام', 'بوطالب', 'بوعنداس', 'بوقاعة', 'بيضاء برج', 'تاشودة', 'تالة إيفاسن', 'تيزي نبشار', 'جميلة',
@@ -1337,7 +1331,7 @@
             ],
             '22': ['الحصيبة', 'السهالة الثورة', 'الضاية', 'العمارنة', 'بئر الحمام', 'بضرابين المقراني', 'بلعربي', 'بن باديس',
                 'بن عشيبة شلية', 'بوجبهة البرج', 'بوخنفيس', 'تاودموت', 'تسالة', 'تغاليمت', 'تفسور', 'تلاغ', 'تلموني',
-                'تنيرة', 'حاسي دحو', 'حاسي زهانة', 'راس الماء', 'رجم دموش', 'زروالة', 'سفيزف', 'سيدي ابراهيم',
+                'تنيرة', 'حاسي دحو', 'حاسي زهانة', 'رأس الماء', 'رجم دموش', 'زروالة', 'سفيزف', 'سيدي ابراهيم',
                 'سيدي بلعباس', 'سيدي حمادوش', 'سيدي خالد', 'سيدي دحو الزاير', 'سيدي شعيب', 'سيدي علي بن يوب',
                 'سيدي علي بوسيدي', 'سيدي لحسن', 'سيدي يعقوب', 'شيطوان البلايلة', 'طابية', 'عين أدن', 'عين البرد',
                 'عين الثريد', 'عين تندمين', 'عين قادة', 'لمطار', 'مرحوم', 'مرين', 'مزاورو', 'مسيد', 'مصطفى بن ابراهيم',
@@ -1355,7 +1349,7 @@
             '25': ['أبن باديس الهرية', 'أولاد رحمون', 'ابن زياد', 'الخروب', 'بني حميدان', 'بوجريو مسعود', 'حامة بوزيان',
                 'ديدوش مراد', 'زيغود يوسف', 'عين السمارة', 'عين عبيد', 'قسنطينة'
             ],
-            '26': ['أم الجليل', 'أولاد إبراهيم', 'أولاد امعرف', 'أولاد بوعشرة', 'أولاد دايد', 'أولاد عنتر', 'أولاد هلال',
+            '26': ['أم الجليل', 'أولاد إبراهيم', 'أولد امعرف', 'أولاد بوعشرة', 'أولاد دايد', 'أولاد عنتر', 'أولاد هلال',
                 'البرواقية', 'الحمدانية', 'الحوضان', 'الربعية', 'الزبيرية', 'السانق', 'السواقي', 'الشهبونية', 'العزيزية',
                 'العمارية', 'العوينات', 'العيساوية', 'القلب الكبير', 'الكاف الاخضر', 'المدية', 'بئر بن عابد', 'بعطة',
                 'بن شكاو', 'بني سليمان', 'بوسكن', 'بوشراحيل', 'بوعيش', 'بوعيشون', 'بوغار', 'بوغزول', 'تابلاط', 'تفراوت',
@@ -1576,7 +1570,7 @@
                 document.getElementById('wilayaErr').classList.remove('show');
             } else {
                 baladiyaEl.disabled = true;
-                baladiyaEl.innerHTML = '<option value="">-- اختر الولاية أولاً --</option>';
+                baladiyaEl.innerHTML = '<option value="">-- اختر الولاية أولاّ --</option>';
                 homePrice = 0;
                 deskPrice = 0;
                 deliveryType = 'home';
@@ -1835,7 +1829,7 @@ function showSuccess() {
             deliveryType = 'home';
             document.getElementById('qtyDisplay').textContent = '1';
             document.getElementById('baladiya').disabled = true;
-            document.getElementById('baladiya').innerHTML = '<option value="">-- اختر الولاية أولاً --</option>';
+            document.getElementById('baladiya').innerHTML = '<option value="">-- اختر الولاية أولاّ --</option>';
             document.querySelectorAll('.form-input, .form-select').forEach(el => {
                 el.classList.remove('valid', 'error');
             });
