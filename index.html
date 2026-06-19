@@ -774,6 +774,7 @@
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -1666,61 +1667,34 @@
         }
 
         async function submitOrder() {
-            if (!validate()) {
-                document.querySelector('.cod-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
-                return;
-            }
+    if (!validate()) {
+        document.querySelector('.cod-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+    }
 
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<span>⏳ جارٍ إرسال الطلب...</span>';
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span>⏳ جارٍ إرسال الطلب...</span>';
 
-            trackInitiateCheckout(currentQty, currentDeliveryPrice);
+    trackInitiateCheckout(currentQty, currentDeliveryPrice);
 
-            const wilayaEl = document.getElementById('wilaya');
-            const wilayaText = wilayaEl.options[wilayaEl.selectedIndex].text;
-            const baladiya = document.getElementById('baladiya').value;
-            const total = getTotalPrice(currentQty, currentDeliveryPrice);
-            const productPrice = getProductPrice(currentQty);
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('fr-DZ') + ' ' + now.toLocaleTimeString('fr-DZ');
-            const customerName = document.getElementById('fullName').value.trim();
-            const customerPhone = document.getElementById('phone').value.trim();
+    const wilayaEl = document.getElementById('wilaya');
+    const wilayaText = wilayaEl.options[wilayaEl.selectedIndex].text;
+    const baladiya = document.getElementById('baladiya').value;
+    const total = getTotalPrice(currentQty, currentDeliveryPrice);
+    const productPrice = getProductPrice(currentQty);
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('fr-DZ') + ' ' + now.toLocaleTimeString('fr-DZ');
+    const customerName = document.getElementById('fullName').value.trim();
+    const customerPhone = document.getElementById('phone').value.trim();
 
-            // Determine effective delivery price (0 if qty>=2)
-            const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
+    const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
 
-            // ─── SEND ORDER TO GOOGLE SHEETS ───
-            const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsM-66UPCCqa-Sc5mph5LGs2WVxWq1X2cCeRZ8ny3qE9E5q_hWPBp0srpDFsV37AlDbw/exec';
+    // ─── BUILD TELEGRAM MESSAGE ───
+    const deliveryTypeText = deliveryType === 'home' ? 'توصيل للمنزل 🏠' : 'التوصيل للمكتب 📦';
+    const freeDeliveryText = (currentQty >= 2) ? '✅ مجاني (2+ قطع)' : effectiveDelivery.toLocaleString('fr-DZ') + ' دج';
 
-            const payload = {
-                date: dateStr,
-                nom: customerName,
-                phone: customerPhone,
-                wilaya: wilayaText,
-                commune: baladiya,
-                produit: 'Bâche Couvert Automobile',
-                prix_produit: productPrice,
-                quantite: currentQty,
-                prix_total: total,
-                livraison: deliveryType === 'home' ? 'A Domicile' : 'Point Relais',
-                prix_livraison: effectiveDelivery,
-                delivery_type_code: deliveryType,
-                sku: 'CPB',              // ← SKU replaces home_price
-                desk_price: deskPrice,
-                product_base_price: PRODUCT_BASE,
-                product_qty2_price: PRODUCT_BASE * 2,
-                free_delivery: (currentQty >= 2) ? 'Yes' : 'No'
-            };
-
-            // ─── SEND ORDER TO TELEGRAM BOTS ───
-            const BOT_1 = { token: '8916453850:AAEFJKHdQdIIs2kgvW6MUAouvctxMUGNFUU', chat: '6447776485' };
-            const BOT_2 = { token: '8738212864:AAHJNNhi3EH1OR1wkOfYkBX-KxgjJ0y8w1o', chat: '6405258861' };
-
-            const deliveryTypeText = deliveryType === 'home' ? 'توصيل للمنزل 🏠' : 'التوصيل للمكتب 📦';
-            const freeDeliveryText = (currentQty >= 2) ? '✅ مجاني (2+ قطع)' : effectiveDelivery.toLocaleString('fr-DZ') + ' دج';
-
-            const message = `
+    const message = `
 🛒 <b>طلب جديد — Bâche Couvert Automobile</b>
 
 👤 <b>الاسم الكامل:</b> ${customerName}
@@ -1734,46 +1708,124 @@
 🚚 <b>سعر التوصيل:</b> ${freeDeliveryText}
 💵 <b>المجموع الكلي:</b> ${total.toLocaleString('fr-DZ')} دج
 📅 <b>تاريخ الطلب:</b> ${dateStr}
-            `.trim();
+    `.trim();
 
-            async function sendToBot(bot) {
-                const url = `https://api.telegram.org/bot${bot.token}/sendMessage`;
-                try {
-                    await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            chat_id: bot.chat,
-                            text: message,
-                            parse_mode: 'HTML'
-                        })
-                    });
-                } catch (e) {
-                    console.error('Telegram send failed for bot', bot.chat, e);
+    // ─── TELEGRAM BOTS CONFIG ───
+    const BOT_1 = { token: '8916453850:AAEFJKHdQdIIs2kgvW6MUAouvctxMUGNFUU', chat: '6447776485' };
+    const BOT_2 = { token: '8738212864:AAHJNNhi3EH1OR1wkOfYkBX-KxgjJ0y8w1o', chat: '6405258861' };
+
+    // ─── TELEGRAM SENDER (using XMLHttpRequest for reliability) ───
+    function sendToBot(bot) {
+        const url = `https://api.telegram.org/bot${bot.token}/sendMessage`;
+        const botPayload = {
+            chat_id: bot.chat,
+            text: message,
+            parse_mode: 'HTML'
+        };
+
+        return new Promise((resolve) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.timeout = 15000; // 15 second timeout
+
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    console.log('✅ Telegram sent to bot', bot.chat);
+                    resolve({success: true, bot: bot.chat});
+                } else {
+                    console.error('❌ Telegram HTTP error for bot', bot.chat, 'Status:', xhr.status, 'Response:', xhr.responseText);
+                    resolve({success: false, bot: bot.chat, error: 'HTTP ' + xhr.status});
                 }
-            }
+            };
 
-            // Send to Google Sheets + both Telegram bots simultaneously
-            const formData = new URLSearchParams();
-Object.keys(payload).forEach(key => {
-    formData.append(key, payload[key]);
-});
+            xhr.onerror = function() {
+                console.error('❌ Telegram network error for bot', bot.chat);
+                resolve({success: false, bot: bot.chat, error: 'network'});
+            };
 
-await fetch(APPS_SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: formData.toString()
-})
+            xhr.ontimeout = function() {
+                console.error('⏱️ Telegram timeout for bot', bot.chat);
+                resolve({success: false, bot: bot.chat, error: 'timeout'});
+            };
 
-            trackPurchase(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText);
+            xhr.send(JSON.stringify(botPayload));
+        });
+    }
 
-            showSuccess();
-            btn.disabled = false;
-            btn.innerHTML = '<span>✅ أتمم طلبي الآن</span>';
-        }
+    // ─── GOOGLE SHEETS PAYLOAD ───
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4U0ENbwT6svfrZjl3xyuih3UjtSePippnWQ0b6_3GYRsXRMnV_z8tjjtvTpB6-5RgYg/exec';
 
-        function showSuccess() {
+    const payload = {
+        date: dateStr,
+        nom: customerName,
+        phone: customerPhone,
+        wilaya: wilayaText,
+        commune: baladiya,
+        produit: 'Bâche Couvert Automobile',
+        prix_produit: productPrice,
+        quantite: currentQty,
+        prix_total: total,
+        livraison: deliveryType === 'home' ? 'A Domicile' : 'Point Relais',
+        prix_livraison: effectiveDelivery,
+        delivery_type_code: deliveryType,
+        sku: 'CPB',
+        desk_price: deskPrice,
+        product_base_price: PRODUCT_BASE,
+        product_qty2_price: PRODUCT_BASE * 2,
+        free_delivery: (currentQty >= 2) ? 'Yes' : 'No'
+    };
+
+    // ─── SEND ALL REQUESTS ───
+    // We use Promise.allSettled so one failure doesn't block the others
+    const results = [];
+
+    try {
+        // 1. Google Sheets
+        const formData = new URLSearchParams();
+        Object.keys(payload).forEach(key => {
+            formData.append(key, payload[key]);
+        });
+
+        const sheetsPromise = fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData.toString()
+        }).then(() => {
+            console.log('✅ Google Sheets sent');
+            results.push({service: 'sheets', success: true});
+        }).catch(err => {
+            console.error('❌ Google Sheets failed:', err);
+            results.push({service: 'sheets', success: false, error: err.message});
+        });
+
+        // 2. Telegram Bot 1
+        const bot1Promise = sendToBot(BOT_1).then(r => {
+            results.push({service: 'telegram1', ...r});
+        });
+
+        // 3. Telegram Bot 2
+        const bot2Promise = sendToBot(BOT_2).then(r => {
+            results.push({service: 'telegram2', ...r});
+        });
+
+        // Wait for all (don't block on failures)
+        await Promise.allSettled([sheetsPromise, bot1Promise, bot2Promise]);
+
+        console.log('📊 All send results:', results);
+
+    } catch (e) {
+        console.error('❌ Overall send error:', e);
+    }
+
+    trackPurchase(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText);
+
+    showSuccess();
+    btn.disabled = false;
+    btn.innerHTML = '<span>✅ أتمم طلبي الآن</span>';
+}
+function showSuccess() {
             document.getElementById('successPopup').classList.add('active');
             document.getElementById('orderForm').reset();
             currentQty = 1;
