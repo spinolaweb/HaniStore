@@ -113,28 +113,35 @@
             pointer-events: none;
         }
 
-        .fullscreen-img {
+        .img-section {
             width: 100%;
             height: 100vh;
-            display: block;
-            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--navy);
+            overflow: hidden;
+            content-visibility: auto;
+            contain-intrinsic-size: 100vw 100vh;
+        }
+        .fullscreen-img {
+            width: auto;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            aspect-ratio: 9 / 16;
+            object-fit: contain;
             object-position: center;
+            display: block;
+            margin: 0 auto;
             background: var(--navy); /* placeholder color so there's no white flash while loading */
             opacity: 0;
             transform: scale(1.015);
             transition: opacity 0.5s ease, transform 0.6s ease;
-            content-visibility: auto;
-            contain-intrinsic-size: 1px 100vh;
         }
         .fullscreen-img.loaded {
             opacity: 1;
             transform: scale(1);
-        }
-        @media (min-width: 769px) {
-            .fullscreen-img {
-                object-fit: contain;
-                background: var(--navy);
-            }
         }
 
         /* ── Floating CTA ── */
@@ -681,7 +688,7 @@
 <body>
 
     <!-- REAL PRODUCT PHOTO (first fold: load eager + high priority) -->
-    <section>
+    <section class="img-section">
         <img class="fullscreen-img" src="real.jpg" alt="صورة حقيقية للمنتج"
              loading="eager" fetchpriority="high" decoding="async"
              onload="this.classList.add('loaded')"
@@ -692,7 +699,7 @@
     <a class="float-btn" id="floatCta" onclick="scrollToForm(event)" href="#cod-form">⬇️ إسحب إلى الأسفل لمزيد من التفاصيل حول المنتج</a>
 
     <!-- HERO (likely visible right after first scroll: lazy but not deprioritized) -->
-    <section>
+    <section class="img-section">
         <img class="fullscreen-img" src="hero-bache.jpg" alt="Bâche Couvert"
              loading="lazy" decoding="async"
              onload="this.classList.add('loaded')"
@@ -701,7 +708,7 @@
     </section>
 
     <!-- PROBLEM + SOLUTION -->
-    <section>
+    <section class="img-section">
         <img class="fullscreen-img" src="ProblemSolution-bache.jpg" alt="المشكلة والحل"
              loading="lazy" decoding="async" fetchpriority="low"
              onload="this.classList.add('loaded')"
@@ -709,7 +716,7 @@
     </section>
 
     <!-- BENEFITS -->
-    <section>
+    <section class="img-section">
         <img class="fullscreen-img" src="Benefits-bache.jpg" alt="المميزات"
              loading="lazy" decoding="async" fetchpriority="low"
              onload="this.classList.add('loaded')"
@@ -717,7 +724,7 @@
     </section>
 
     <!-- OFFER -->
-    <section>
+    <section class="img-section">
         <img class="fullscreen-img" src="offer-bache.jpg" alt="العرض"
              loading="lazy" decoding="async" fetchpriority="low"
              onload="this.classList.add('loaded')"
@@ -740,11 +747,10 @@
                         <span class="lbl-icon">📱</span>
                         رقم الهاتف <span class="required-star">*</span>
                     </label>
-                    <input type="tel" id="phone" class="form-input" placeholder="05XXXXXXXX أو 06XXXXXXXX أو 07XXXXXXXX" maxlength="10" autocomplete="off" inputmode="numeric" />
+                    <input type="tel" id="phone" class="form-input" placeholder="قم إدخال رقم هاتفك هنا" maxlength="10" autocomplete="off" inputmode="numeric" />
                     <div class="field-error" id="phoneErr">يجب أن يبدأ الرقم بـ 05 أو 06 أو 07 ويتكون من 10 أرقام</div>
                 </div>
 
-                
                 <!-- Name (optional) -->
                 <div class="form-group">
                     <label class="form-label" for="fullName">
@@ -824,7 +830,6 @@
                     <div class="field-error" id="wilayaErr">يرجى اختيار الولاية</div>
                 </div>
 
-                
                 <!-- Delivery Type -->
                 <div class="form-group">
                     <label class="form-label">
@@ -865,7 +870,6 @@
                     </div>
                 </div>
 
-                
                 <!-- TOTAL PRICE as CANVAS IMAGE -->
                 <div class="form-group">
                     <div class="total-price-wrap">
@@ -1182,10 +1186,11 @@
             const dateStr = now.toLocaleDateString('fr-DZ') + ' ' + now.toLocaleTimeString('fr-DZ');
             const customerName = document.getElementById('fullName').value.trim();
             const customerPhone = document.getElementById('phone').value.trim();
-            const customerPhone2 = document.getElementById('phone2').value.trim();
-            const customerCommune = document.getElementById('commune').value.trim();
-            const customerAdresse = document.getElementById('adresse').value.trim();
-            const customerRemarque = document.getElementById('remarque').value.trim();
+            // These columns still exist in the sheet but are no longer collected on the page.
+            const customerPhone2 = '';
+            const customerCommune = '';
+            const customerAdresse = '';
+            const customerRemarque = '';
 
             const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
             // "Réduction" = delivery fee waived thanks to the 2+ free-delivery offer
@@ -1352,9 +1357,6 @@
         document.getElementById('phone').addEventListener('input', function() {
             this.value = this.value.replace(/[^0-9]/g, '');
         });
-        document.getElementById('phone2').addEventListener('input', function() {
-            this.value = this.value.replace(/[^0-9]/g, '');
-        });
 
         if (!CanvasRenderingContext2D.prototype.roundRect) {
             CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
@@ -1383,7 +1385,7 @@
                         floatCta.classList.remove('hidden');
                     }
                 });
-            }, { threshold: 0.08 });
+            }, { threshold: 0, rootMargin: '0px 0px -10% 0px' });
             ctaObserver.observe(codFormSection);
         }
 
