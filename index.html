@@ -62,6 +62,11 @@
         }
     </script>
 
+    <!-- ── Image performance: preload the first visible image so it starts
+         downloading immediately instead of waiting for the parser to reach <body> ── -->
+    <link rel="preload" as="image" href="real.jpg" fetchpriority="high" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
     <base target="_blank" />
     <style>
         /* ── Reset & Base ── */
@@ -114,6 +119,16 @@
             display: block;
             object-fit: cover;
             object-position: center;
+            background: var(--navy); /* placeholder color so there's no white flash while loading */
+            opacity: 0;
+            transform: scale(1.015);
+            transition: opacity 0.5s ease, transform 0.6s ease;
+            content-visibility: auto;
+            contain-intrinsic-size: 1px 100vh;
+        }
+        .fullscreen-img.loaded {
+            opacity: 1;
+            transform: scale(1);
         }
         @media (min-width: 769px) {
             .fullscreen-img {
@@ -226,7 +241,8 @@
         }
 
         .form-input,
-        .form-select {
+        .form-select,
+        .form-textarea {
             width: 100%;
             padding: 14px 18px;
             border: 2px solid var(--light-gray);
@@ -240,8 +256,14 @@
             -webkit-appearance: none;
             appearance: none;
         }
+        .form-textarea {
+            resize: vertical;
+            min-height: 70px;
+            font-family: 'Cairo', sans-serif;
+        }
         .form-input:focus,
-        .form-select:focus {
+        .form-select:focus,
+        .form-textarea:focus {
             outline: none;
             border-color: var(--gold);
             box-shadow: 0 0 0 4px rgba(245, 197, 24, 0.15);
@@ -658,33 +680,48 @@
 </head>
 <body>
 
-    <!-- REAL PRODUCT PHOTO -->
+    <!-- REAL PRODUCT PHOTO (first fold: load eager + high priority) -->
     <section>
-        <img class="fullscreen-img" src="real.jpg" alt="صورة حقيقية للمنتج" onerror="this.style.background='linear-gradient(135deg, #0A1628, #122040)'" />
+        <img class="fullscreen-img" src="real.jpg" alt="صورة حقيقية للمنتج"
+             loading="eager" fetchpriority="high" decoding="async"
+             onload="this.classList.add('loaded')"
+             onerror="this.style.background='linear-gradient(135deg, #0A1628, #122040)'; this.classList.add('loaded')" />
     </section>
 
     <!-- Floating CTA -->
     <a class="float-btn" id="floatCta" onclick="scrollToForm(event)" href="#cod-form">⬇️ إسحب إلى الأسفل لمزيد من التفاصيل حول المنتج</a>
 
-    <!-- HERO -->
+    <!-- HERO (likely visible right after first scroll: lazy but not deprioritized) -->
     <section>
-        <img class="fullscreen-img" src="hero-bache.jpg" alt="Bâche Couvert" onerror="this.style.background='linear-gradient(135deg, #0A1628, #122040)'" />
+        <img class="fullscreen-img" src="hero-bache.jpg" alt="Bâche Couvert"
+             loading="lazy" decoding="async"
+             onload="this.classList.add('loaded')"
+             onerror="this.style.background='linear-gradient(135deg, #0A1628, #122040)'; this.classList.add('loaded')" />
         <span class="fb-price" aria-label="1300 DZD" data-price="1300">1300 دج</span>
     </section>
 
     <!-- PROBLEM + SOLUTION -->
     <section>
-        <img class="fullscreen-img" src="ProblemSolution-bache.jpg" alt="المشكلة والحل" onerror="this.style.background='#0A1628'" />
+        <img class="fullscreen-img" src="ProblemSolution-bache.jpg" alt="المشكلة والحل"
+             loading="lazy" decoding="async" fetchpriority="low"
+             onload="this.classList.add('loaded')"
+             onerror="this.style.background='#0A1628'; this.classList.add('loaded')" />
     </section>
 
     <!-- BENEFITS -->
     <section>
-        <img class="fullscreen-img" src="Benefits-bache.jpg" alt="المميزات" onerror="this.style.background='linear-gradient(135deg, #fafbff, #f0f4ff)'" />
+        <img class="fullscreen-img" src="Benefits-bache.jpg" alt="المميزات"
+             loading="lazy" decoding="async" fetchpriority="low"
+             onload="this.classList.add('loaded')"
+             onerror="this.style.background='linear-gradient(135deg, #fafbff, #f0f4ff)'; this.classList.add('loaded')" />
     </section>
 
     <!-- OFFER -->
     <section>
-        <img class="fullscreen-img" src="offer-bache.jpg" alt="العرض" onerror="this.style.background='#0A1628'" />
+        <img class="fullscreen-img" src="offer-bache.jpg" alt="العرض"
+             loading="lazy" decoding="async" fetchpriority="low"
+             onload="this.classList.add('loaded')"
+             onerror="this.style.background='#0A1628'; this.classList.add('loaded')" />
         <span class="fb-price" aria-label="1300 DZD" data-price="1300">1300 دج</span>
     </section>
 
@@ -707,6 +744,7 @@
                     <div class="field-error" id="phoneErr">يجب أن يبدأ الرقم بـ 05 أو 06 أو 07 ويتكون من 10 أرقام</div>
                 </div>
 
+                
                 <!-- Name (optional) -->
                 <div class="form-group">
                     <label class="form-label" for="fullName">
@@ -786,6 +824,7 @@
                     <div class="field-error" id="wilayaErr">يرجى اختيار الولاية</div>
                 </div>
 
+                
                 <!-- Delivery Type -->
                 <div class="form-group">
                     <label class="form-label">
@@ -826,6 +865,7 @@
                     </div>
                 </div>
 
+                
                 <!-- TOTAL PRICE as CANVAS IMAGE -->
                 <div class="form-group">
                     <div class="total-price-wrap">
@@ -890,6 +930,19 @@
         const PIXEL_PRODUCT_ID = 'BACHE_COUVERT_AUTO';
         const PIXEL_PRICE_PER_UNIT = 1300; // Fixed price sent to Facebook
         const PIXEL_CURRENCY = 'DZD';
+
+        // ─── REFERENT (traffic source) DETECTION ───
+        // Used to fill the "Référent" column in the sheet.
+        function detectReferent() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('utm_source')) return params.get('utm_source');
+            if (params.get('fbclid')) return 'Facebook Ads';
+            if (document.referrer && document.referrer.includes('facebook.com')) return 'Facebook';
+            if (document.referrer && document.referrer.includes('instagram.com')) return 'Instagram';
+            if (document.referrer) return document.referrer;
+            return 'Direct';
+        }
+        const REFERENT_SOURCE = detectReferent();
 
         fbq('track', 'ViewContent', {
             content_ids: [PIXEL_PRODUCT_ID],
@@ -1123,33 +1176,40 @@
 
             const wilayaEl = document.getElementById('wilaya');
             const wilayaText = wilayaEl.options[wilayaEl.selectedIndex].text;
-            const baladiya = ''; // hidden field, send empty
             const total = getTotalPrice(currentQty, currentDeliveryPrice);
             const productPrice = getProductPrice(currentQty);
             const now = new Date();
             const dateStr = now.toLocaleDateString('fr-DZ') + ' ' + now.toLocaleTimeString('fr-DZ');
             const customerName = document.getElementById('fullName').value.trim();
             const customerPhone = document.getElementById('phone').value.trim();
+            const customerPhone2 = document.getElementById('phone2').value.trim();
+            const customerCommune = document.getElementById('commune').value.trim();
+            const customerAdresse = document.getElementById('adresse').value.trim();
+            const customerRemarque = document.getElementById('remarque').value.trim();
 
             const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
+            // "Réduction" = delivery fee waived thanks to the 2+ free-delivery offer
+            const reductionAmount = (currentQty >= 2) ? currentDeliveryPrice : 0;
+            const isStopDesk = deliveryType === 'desk';
 
             // ─── BUILD TELEGRAM MESSAGE ───
-            const deliveryTypeText = deliveryType === 'home' ? 'توصيل للمنزل 🏠' : 'التوصيل للمكتب 📦';
+            const deliveryTypeText = deliveryType === 'home' ? 'توصيل للمنزل 🏠' : 'التوصيل للمكتب (Stop Desk) 📦';
             const freeDeliveryText = (currentQty >= 2) ? '✅ مجاني (2+ قطع)' : effectiveDelivery.toLocaleString('fr-DZ') + ' دج';
 
             const message = `
 🛒 <b>طلب جديد — Bâche Couvert Automobile</b>
 
-📱 <b>رقم الهاتف:</b> ${customerPhone}
+📱 <b>رقم الهاتف:</b> ${customerPhone}${customerPhone2 ? '\n📱 <b>رقم هاتف إضافي:</b> ' + customerPhone2 : ''}
 👤 <b>الاسم الكامل:</b> ${customerName || '—'}
-📍 <b>الولاية:</b> ${wilayaText}
+📍 <b>الولاية:</b> ${wilayaText}${customerCommune ? '\n🏘️ <b>البلدية:</b> ' + customerCommune : ''}${customerAdresse ? '\n🏠 <b>العنوان:</b> ' + customerAdresse : ''}
 🏷️ <b>SKU:</b> BCA
 🚚 <b>نوع التوصيل:</b> ${deliveryTypeText}
 📦 <b>الكمية:</b> ${currentQty}
-💰 <b>سعر المنتج:</b> ${productPrice.toLocaleString('fr-DZ')} دج
+💰 <b>سعر المنتج (للوحدة):</b> ${PRODUCT_BASE.toLocaleString('fr-DZ')} دج
 🚚 <b>سعر التوصيل:</b> ${freeDeliveryText}
-💵 <b>المجموع الكلي:</b> ${total.toLocaleString('fr-DZ')} دج
+💵 <b>المجموع الكلي:</b> ${total.toLocaleString('fr-DZ')} دج${customerRemarque ? '\n📝 <b>ملاحظة:</b> ' + customerRemarque : ''}
 📅 <b>تاريخ الطلب:</b> ${dateStr}
+🔗 <b>المصدر:</b> ${REFERENT_SOURCE}
             `.trim();
 
             // ─── TELEGRAM BOTS CONFIG ───
@@ -1196,26 +1256,26 @@
             }
 
             // ─── GOOGLE SHEETS PAYLOAD ───
+            // Field names match the new sheet columns 1:1 (see Apps Script doPost).
             const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4U0ENbwT6svfrZjl3xyuih3UjtSePippnWQ0b6_3GYRsXRMnV_z8tjjtvTpB6-5RgYg/exec';
 
             const payload = {
                 date: dateStr,
-                nom: customerName || '',
-                phone: customerPhone,
+                client: customerName || '',
+                telephone: customerPhone,
+                telephone2: customerPhone2 || '',
                 wilaya: wilayaText,
-                commune: baladiya, // sent empty
-                produit: 'Bâche Couvert Automobile',
-                prix_produit: productPrice,
+                commune: customerCommune || '',
+                adresse: customerAdresse || '',
+                remarque: customerRemarque || '',
+                produit_sku: 'Bâche Couvert Automobile (BCA)',
                 quantite: currentQty,
-                prix_total: total,
-                livraison: deliveryType === 'home' ? 'A Domicile' : 'Bureau',
-                prix_livraison: effectiveDelivery,
-                delivery_type_code: deliveryType,
-                sku: 'BCA',
-                desk_price: deskPrice,
-                product_base_price: PRODUCT_BASE,
-                product_qty2_price: PRODUCT_BASE * 2,
-                free_delivery: (currentQty >= 2) ? 'Yes' : 'No'
+                prix_unitaire: PRODUCT_BASE,
+                frais_livraison: effectiveDelivery,
+                reduction: reductionAmount,
+                referent: REFERENT_SOURCE,
+                stopdesk: isStopDesk ? 'Oui' : 'Non',
+                prix_total: total
             };
 
             // ─── SEND ALL REQUESTS ───
@@ -1275,7 +1335,7 @@
             deskPrice = 0;
             deliveryType = 'home';
             document.getElementById('qtyDisplay').textContent = '1';
-            document.querySelectorAll('.form-input, .form-select').forEach(el => {
+            document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(el => {
                 el.classList.remove('valid', 'error');
             });
             updateUI();
@@ -1290,6 +1350,9 @@
         });
 
         document.getElementById('phone').addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+        document.getElementById('phone2').addEventListener('input', function() {
             this.value = this.value.replace(/[^0-9]/g, '');
         });
 
