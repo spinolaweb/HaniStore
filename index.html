@@ -38,7 +38,7 @@
     </noscript>
     <!-- ════════════════════════════════════════════ -->
 
-    <!-- Facebook / Open Graph Meta (only 1300 DA visible to FB) -->
+    <!-- Facebook / Open Graph Meta -->
     <meta property="og:title" content="Bâche Couvert Automobile - غطاء سيارة" />
     <meta property="og:description" content="غطاء سيارة عالي الجودة لحماية سيارتك" />
     <meta property="product:price:amount" content="1300" />
@@ -46,7 +46,7 @@
     <meta property="product:availability" content="in stock" />
     <meta property="og:type" content="product" />
 
-    <!-- Schema.org structured data – Facebook sees 1300 DA only -->
+    <!-- Schema.org structured data -->
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -62,22 +62,14 @@
         }
     </script>
 
-    <!-- ── Image performance: preload the first visible image so it starts
-         downloading immediately instead of waiting for the parser to reach <body> ── -->
     <link rel="preload" as="image" href="real.jpg" fetchpriority="high" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <base target="_blank" />
     <style>
         /* ── Reset & Base ── */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        html {
-            scroll-behavior: smooth;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
             font-family: 'Cairo', sans-serif;
             background: #0A1628;
@@ -101,70 +93,48 @@
         }
 
         .fb-price {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 1px;
-            height: 1px;
-            overflow: hidden;
-            opacity: 0;
-            color: transparent;
-            font-size: 0.001px;
+            position: absolute; left: 0; top: 0;
+            width: 1px; height: 1px;
+            overflow: hidden; opacity: 0;
+            color: transparent; font-size: 0.001px;
             pointer-events: none;
         }
 
-        /* ── Seamless full-bleed 9:16 image sections: no gaps, fixed ratio, centered ── */
+        /* ── Image sections ── */
         .img-section {
-            width: 100%;
-            background: var(--navy);
-            display: flex;
-            justify-content: center;
-            font-size: 0;
-            line-height: 0;
+            width: 100%; background: var(--navy);
+            display: flex; justify-content: center;
+            font-size: 0; line-height: 0;
         }
         .img-frame {
-            width: 100%;
-            max-width: 480px;
-            aspect-ratio: 9 / 16;
-            overflow: hidden;
-            position: relative;
-            background: var(--navy);
+            width: 100%; max-width: 480px;
+            aspect-ratio: 9 / 16; overflow: hidden;
+            position: relative; background: var(--navy);
         }
         .fullscreen-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-            display: block;
-            opacity: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center;
+            display: block; opacity: 0;
             transition: opacity 0.5s ease, transform 0.6s ease;
             transform: scale(1.015);
         }
         .fullscreen-img.loaded {
-            opacity: 1;
-            transform: scale(1);
+            opacity: 1; transform: scale(1);
         }
 
         /* ── Floating CTA ── */
         .float-btn {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 999;
+            position: fixed; bottom: 24px; left: 50%;
+            transform: translateX(-50%); z-index: 999;
             background: linear-gradient(135deg, var(--red), #c0001f);
-            color: white;
-            border: none;
-            padding: 16px 40px;
-            border-radius: 50px;
+            color: white; border: none;
+            padding: 16px 40px; border-radius: 50px;
             font-family: 'Cairo', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 900;
+            font-size: 1.1rem; font-weight: 900;
             cursor: pointer;
             box-shadow: 0 8px 30px rgba(232, 19, 42, 0.5);
             animation: pulse 2s infinite;
-            white-space: nowrap;
-            text-decoration: none;
+            white-space: nowrap; text-decoration: none;
             display: inline-block;
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
@@ -173,128 +143,95 @@
             transform: translateX(-50%) scale(1.05);
         }
         .float-btn.hidden {
-            opacity: 0;
-            pointer-events: none;
+            opacity: 0; pointer-events: none;
             transform: translateX(-50%) translateY(30px);
         }
         @keyframes pulse {
-            0%,
-            100% {
-                box-shadow: 0 8px 30px rgba(232, 19, 42, 0.5);
-            }
-            50% {
-                box-shadow: 0 8px 50px rgba(232, 19, 42, 0.8);
-            }
+            0%, 100% { box-shadow: 0 8px 30px rgba(232, 19, 42, 0.5); }
+            50% { box-shadow: 0 8px 50px rgba(232, 19, 42, 0.8); }
         }
 
+        /* ── Hidden iframe for form submission ── */
+        #sheetsIframe {
+            display: none;
+            width: 0; height: 0;
+            border: none;
+        }
+
+        /* ── COD Section ── */
         .cod-section {
             background: linear-gradient(135deg, var(--navy) 0%, #0d2040 100%);
             padding: 80px 20px 120px;
         }
         .form-header {
-            text-align: center;
-            margin-bottom: 48px;
+            text-align: center; margin-bottom: 48px;
         }
         .form-header h2 {
             color: white;
             font-size: clamp(1.8rem, 4vw, 2.6rem);
-            font-weight: 900;
-            margin-bottom: 12px;
+            font-weight: 900; margin-bottom: 12px;
         }
-        .form-header h2 span {
-            color: var(--gold);
-        }
+        .form-header h2 span { color: var(--gold); }
         .form-header p {
             color: rgba(255, 255, 255, 0.7);
             font-size: 1rem;
         }
 
         .cod-form {
-            background: white;
-            border-radius: 24px;
-            padding: 48px 40px;
-            max-width: 720px;
+            background: white; border-radius: 24px;
+            padding: 48px 40px; max-width: 720px;
             margin: 0 auto;
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
+            position: relative; overflow: hidden;
         }
         .cod-form::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            left: 0;
-            height: 6px;
+            content: ''; position: absolute;
+            top: 0; right: 0; left: 0; height: 6px;
             background: linear-gradient(90deg, var(--gold), var(--red));
         }
 
-        .form-group {
-            margin-bottom: 24px;
-        }
+        .form-group { margin-bottom: 24px; }
         .form-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--navy);
+            display: flex; align-items: center;
+            gap: 8px; font-size: 0.95rem;
+            font-weight: 700; color: var(--navy);
             margin-bottom: 10px;
         }
-        .form-label .lbl-icon {
-            font-size: 1.1rem;
-        }
-        .required-star {
-            color: var(--red);
-        }
+        .form-label .lbl-icon { font-size: 1.1rem; }
+        .required-star { color: var(--red); }
 
-        .form-input,
-        .form-select,
-        .form-textarea {
-            width: 100%;
-            padding: 14px 18px;
+        .form-input, .form-select, .form-textarea {
+            width: 100%; padding: 14px 18px;
             border: 2px solid var(--light-gray);
             border-radius: 12px;
             font-family: 'Cairo', sans-serif;
-            font-size: 1rem;
-            color: var(--navy);
+            font-size: 1rem; color: var(--navy);
             background: var(--off-white);
             transition: border-color 0.2s, box-shadow 0.2s;
             direction: rtl;
-            -webkit-appearance: none;
-            appearance: none;
+            -webkit-appearance: none; appearance: none;
         }
         .form-textarea {
-            resize: vertical;
-            min-height: 70px;
+            resize: vertical; min-height: 70px;
             font-family: 'Cairo', sans-serif;
         }
-        .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
-            outline: none;
-            border-color: var(--gold);
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none; border-color: var(--gold);
             box-shadow: 0 0 0 4px rgba(245, 197, 24, 0.15);
             background: white;
         }
-        .form-input.error,
-        .form-select.error {
+        .form-input.error, .form-select.error {
             border-color: var(--red);
             box-shadow: 0 0 0 4px rgba(232, 19, 42, 0.1);
         }
-        .form-input.valid,
-        .form-select.valid {
+        .form-input.valid, .form-select.valid {
             border-color: var(--success);
         }
         .field-error {
-            color: var(--red);
-            font-size: 0.82rem;
-            margin-top: 6px;
-            display: none;
+            color: var(--red); font-size: 0.82rem;
+            margin-top: 6px; display: none;
         }
-        .field-error.show {
-            display: block;
-        }
+        .field-error.show { display: block; }
 
         .form-select {
             cursor: pointer;
@@ -305,390 +242,253 @@
         }
 
         .delivery-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-top: 4px;
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 14px; margin-top: 4px;
         }
         .delivery-card {
             border: 2px solid var(--light-gray);
-            border-radius: 14px;
-            padding: 16px 14px;
-            text-align: center;
-            cursor: pointer;
+            border-radius: 14px; padding: 16px 14px;
+            text-align: center; cursor: pointer;
             transition: all 0.25s ease;
-            background: var(--off-white);
-            position: relative;
+            background: var(--off-white); position: relative;
         }
         .delivery-card:hover {
-            border-color: var(--gold);
-            background: #fffef5;
+            border-color: var(--gold); background: #fffef5;
         }
         .delivery-card.active {
-            border-color: var(--gold);
-            background: #fff8e0;
+            border-color: var(--gold); background: #fff8e0;
             box-shadow: 0 0 0 4px rgba(245, 197, 24, 0.15);
         }
         .delivery-card .delivery-icon {
-            font-size: 1.6rem;
-            display: block;
-            margin-bottom: 6px;
+            font-size: 1.6rem; display: block; margin-bottom: 6px;
         }
         .delivery-card .delivery-name {
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: var(--navy);
+            font-weight: 700; font-size: 0.95rem; color: var(--navy);
         }
         .delivery-card .delivery-price {
-            font-size: 0.85rem;
-            color: var(--gray);
-            margin-top: 2px;
+            font-size: 0.85rem; color: var(--gray); margin-top: 2px;
         }
         .delivery-card .delivery-price strong {
-            color: var(--red);
-            font-weight: 900;
-            font-size: 1rem;
+            color: var(--red); font-weight: 900; font-size: 1rem;
         }
         .delivery-card input[type="radio"] {
-            position: absolute;
-            opacity: 0;
-            width: 0;
-            height: 0;
+            position: absolute; opacity: 0; width: 0; height: 0;
         }
         .delivery-card .check-mark {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 2px solid var(--light-gray);
-            background: white;
+            position: absolute; top: 8px; left: 8px;
+            width: 20px; height: 20px; border-radius: 50%;
+            border: 2px solid var(--light-gray); background: white;
             transition: 0.2s;
         }
         .delivery-card.active .check-mark {
-            border-color: var(--gold);
-            background: var(--gold);
+            border-color: var(--gold); background: var(--gold);
         }
         .delivery-card.active .check-mark::after {
-            content: '✓';
-            color: white;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            font-weight: 700;
+            content: '✓'; color: white; font-size: 12px;
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 100%; font-weight: 700;
         }
 
         .qty-control {
-            display: flex;
-            align-items: center;
-            gap: 0;
-            border: 2px solid var(--light-gray);
-            border-radius: 12px;
-            overflow: hidden;
+            display: flex; align-items: center;
+            gap: 0; border: 2px solid var(--light-gray);
+            border-radius: 12px; overflow: hidden;
             background: var(--off-white);
         }
         .qty-btn {
-            width: 52px;
-            height: 52px;
-            background: var(--navy);
-            color: white;
-            border: none;
-            font-size: 1.4rem;
-            cursor: pointer;
-            font-family: 'Cairo', sans-serif;
-            transition: background 0.2s;
-            flex-shrink: 0;
+            width: 52px; height: 52px;
+            background: var(--navy); color: white;
+            border: none; font-size: 1.4rem;
+            cursor: pointer; font-family: 'Cairo', sans-serif;
+            transition: background 0.2s; flex-shrink: 0;
         }
-        .qty-btn:hover {
-            background: #1e3a6e;
-        }
+        .qty-btn:hover { background: #1e3a6e; }
         .qty-display {
-            flex: 1;
-            text-align: center;
-            font-size: 1.3rem;
-            font-weight: 900;
-            color: var(--navy);
-            padding: 12px;
-            min-width: 60px;
+            flex: 1; text-align: center;
+            font-size: 1.3rem; font-weight: 900;
+            color: var(--navy); padding: 12px; min-width: 60px;
         }
 
         .total-price-wrap {
             background: linear-gradient(135deg, #fafbff, #f0f4ff);
-            border-radius: 14px;
-            padding: 18px 20px;
+            border-radius: 14px; padding: 18px 20px;
             border: 2px dashed var(--gold);
-            text-align: center;
-            margin-top: 6px;
+            text-align: center; margin-top: 6px;
         }
         .total-price-wrap .label {
-            font-size: 0.85rem;
-            color: var(--gray);
-            font-weight: 600;
-            display: block;
-            margin-bottom: 6px;
+            font-size: 0.85rem; color: var(--gray);
+            font-weight: 600; display: block; margin-bottom: 6px;
         }
         #totalPriceCanvas {
-            display: block;
-            margin: 0 auto;
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            background: transparent;
+            display: block; margin: 0 auto;
+            max-width: 100%; height: auto;
+            border-radius: 8px; background: transparent;
         }
 
-        /* ── Submit button: static black, no animation ── */
         .submit-btn-wrapper {
-            position: relative;
-            border-radius: 16px;
+            position: relative; border-radius: 16px;
             background: transparent;
         }
         .submit-btn {
-            width: 100%;
-            padding: 18px;
-            background: var(--black);
-            color: white;
-            border: none;
-            border-radius: 14px;
+            width: 100%; padding: 18px;
+            background: var(--black); color: white;
+            border: none; border-radius: 14px;
             font-family: 'Cairo', sans-serif;
-            font-size: 1.15rem;
-            font-weight: 700;
+            font-size: 1.15rem; font-weight: 700;
             cursor: pointer;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
             transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            position: relative;
-            z-index: 1;
+            display: flex; align-items: center;
+            justify-content: center; gap: 10px;
+            position: relative; z-index: 1;
         }
         .submit-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7);
         }
         .submit-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
+            opacity: 0.7; cursor: not-allowed;
             transform: none;
         }
 
         .trust-badges {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin-top: 24px;
-            flex-wrap: wrap;
+            display: flex; justify-content: center;
+            gap: 24px; margin-top: 24px; flex-wrap: wrap;
         }
         .trust-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.82rem;
+            display: flex; align-items: center;
+            gap: 6px; font-size: 0.82rem;
             color: rgba(255, 255, 255, 0.7);
         }
 
         .popup-overlay {
-            position: fixed;
-            inset: 0;
+            position: fixed; inset: 0;
             background: rgba(0, 0, 0, 0.7);
-            z-index: 10000;
-            display: none;
-            align-items: center;
-            justify-content: center;
+            z-index: 10000; display: none;
+            align-items: center; justify-content: center;
             padding: 20px;
         }
-        .popup-overlay.active {
-            display: flex;
-        }
+        .popup-overlay.active { display: flex; }
         .popup-box {
-            background: white;
-            border-radius: 24px;
-            padding: 48px 40px;
-            max-width: 480px;
-            width: 100%;
-            text-align: center;
+            background: white; border-radius: 24px;
+            padding: 48px 40px; max-width: 480px;
+            width: 100%; text-align: center;
             position: relative;
             animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         @keyframes popIn {
-            from {
-                transform: scale(0.7);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
         .popup-check {
-            width: 80px;
-            height: 80px;
+            width: 80px; height: 80px;
             background: linear-gradient(135deg, #28A745, #1e7e34);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            margin: 0 auto 24px;
+            border-radius: 50%; display: flex;
+            align-items: center; justify-content: center;
+            font-size: 2.5rem; margin: 0 auto 24px;
             animation: checkPop 0.5s 0.3s both;
             color: white;
         }
         @keyframes checkPop {
-            from {
-                transform: scale(0);
-            }
-            to {
-                transform: scale(1);
-            }
+            from { transform: scale(0); }
+            to { transform: scale(1); }
         }
         .popup-box h2 {
-            font-size: 1.6rem;
-            font-weight: 900;
-            color: var(--navy);
-            margin-bottom: 12px;
+            font-size: 1.6rem; font-weight: 900;
+            color: var(--navy); margin-bottom: 12px;
         }
         .popup-box p {
-            color: var(--gray);
-            font-size: 0.95rem;
-            line-height: 1.8;
-            margin-bottom: 8px;
+            color: var(--gray); font-size: 0.95rem;
+            line-height: 1.8; margin-bottom: 8px;
         }
         .popup-box .highlight {
-            color: var(--red);
-            font-weight: 700;
+            color: var(--red); font-weight: 700;
         }
         .popup-close {
-            position: absolute;
-            top: 16px;
-            left: 16px;
-            background: var(--light-gray);
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--gray);
+            position: absolute; top: 16px; left: 16px;
+            background: var(--light-gray); border: none;
+            width: 36px; height: 36px; border-radius: 50%;
+            font-size: 1.2rem; cursor: pointer;
+            display: flex; align-items: center;
+            justify-content: center; color: var(--gray);
         }
         .popup-phone {
             background: linear-gradient(135deg, #f0fff4, #e8f5e9);
-            border: 1px solid #c3e6cb;
-            border-radius: 12px;
-            padding: 14px 20px;
-            margin: 20px 0;
-            font-size: 1rem;
-            color: #155724;
-            font-weight: 600;
+            border: 1px solid #c3e6cb; border-radius: 12px;
+            padding: 14px 20px; margin: 20px 0;
+            font-size: 1rem; color: #155724; font-weight: 600;
+        }
+
+        /* ── Debug banner ── */
+        .debug-banner {
+            margin-top: 12px; padding: 10px 14px;
+            border-radius: 8px; font-size: 0.78rem;
+            text-align: center; direction: ltr;
+            word-break: break-all; display: none;
+        }
+        .debug-banner.success {
+            background: #e8f5e9; color: #1e7e34; display: block;
+        }
+        .debug-banner.error {
+            background: #fdecea; color: #c0392b; display: block;
         }
 
         footer {
             background: #060d1a;
             color: rgba(255, 255, 255, 0.7);
-            padding: 40px 20px;
-            text-align: center;
+            padding: 40px 20px; text-align: center;
         }
-        .footer-inner {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+        .footer-inner { max-width: 800px; margin: 0 auto; }
         .footer-logo {
-            width: 80px;
-            height: 80px;
+            width: 80px; height: 80px;
             background: linear-gradient(135deg, #1a3060, #0d2040);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            overflow: hidden;
+            border-radius: 16px; display: flex;
+            align-items: center; justify-content: center;
+            margin: 0 auto 20px; overflow: hidden;
             border: 2px solid rgba(245, 197, 24, 0.3);
         }
         .footer-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+            width: 100%; height: 100%; object-fit: contain;
         }
-        .footer-logo-placeholder {
-            font-size: 2rem;
-        }
+        .footer-logo-placeholder { font-size: 2rem; }
         .footer-name {
-            color: white;
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 8px;
+            color: white; font-size: 1.2rem;
+            font-weight: 700; margin-bottom: 8px;
         }
         .footer-info {
-            font-size: 0.9rem;
-            line-height: 1.8;
-            opacity: 0.6;
+            font-size: 0.9rem; line-height: 1.8; opacity: 0.6;
         }
-        .footer-info a {
-            color: inherit;
-        }
+        .footer-info a { color: inherit; }
         .footer-divider {
             border-color: rgba(255, 255, 255, 0.1);
             margin: 24px 0;
         }
-        .footer-copy {
-            font-size: 0.8rem;
-            opacity: 0.4;
-        }
+        .footer-copy { font-size: 0.8rem; opacity: 0.4; }
 
         @media (max-width: 768px) {
             .float-btn {
-                padding: 14px 22px;
-                font-size: 0.95rem;
-                width: calc(100% - 40px);
-                text-align: center;
-                white-space: normal;
-                line-height: 1.35;
+                padding: 14px 22px; font-size: 0.95rem;
+                width: calc(100% - 40px); text-align: center;
+                white-space: normal; line-height: 1.35;
             }
-            .cod-form {
-                padding: 32px 20px;
-            }
-            .delivery-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }
-            .delivery-card {
-                padding: 12px 10px;
-            }
-            .trust-badges {
-                gap: 12px;
-            }
+            .cod-form { padding: 32px 20px; }
+            .delivery-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .delivery-card { padding: 12px 10px; }
+            .trust-badges { gap: 12px; }
         }
         @media (max-width: 480px) {
-            .cod-section {
-                padding: 60px 12px 100px;
-            }
-            .cod-form {
-                padding: 24px 14px;
-                border-radius: 18px;
-            }
-            .delivery-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 8px;
-            }
-            .delivery-card .delivery-name {
-                font-size: 0.82rem;
-            }
-            .popup-box {
-                padding: 36px 20px;
-            }
+            .cod-section { padding: 60px 12px 100px; }
+            .cod-form { padding: 24px 14px; border-radius: 18px; }
+            .delivery-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .delivery-card .delivery-name { font-size: 0.82rem; }
+            .popup-box { padding: 36px 20px; }
         }
     </style>
 <base target="_blank">
 </head>
 <body>
 
-    <!-- REAL PRODUCT PHOTO (first fold: load eager + high priority) -->
+    <!-- REAL PRODUCT PHOTO -->
     <section class="img-section">
       <div class="img-frame">
         <img class="fullscreen-img" src="real.jpg" alt="صورة حقيقية للمنتج"
@@ -701,7 +501,7 @@
     <!-- Floating CTA -->
     <a class="float-btn" id="floatCta" onclick="scrollToForm(event)" href="#cod-form">⬇️ إسحب إلى الأسفل لمزيد من التفاصيل حول المنتج</a>
 
-    <!-- HERO (likely visible right after first scroll: lazy but not deprioritized) -->
+    <!-- HERO -->
     <section class="img-section">
       <div class="img-frame">
         <img class="fullscreen-img" src="hero-bache.jpg" alt="Bâche Couvert"
@@ -743,6 +543,11 @@
       </div>
     </section>
 
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- HIDDEN IFRAME — Target for form submission to Apps Script     -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <iframe name="sheetsIframe" id="sheetsIframe"></iframe>
+
     <!-- COD FORM -->
     <section class="cod-section" id="cod-form">
         <div class="container">
@@ -750,6 +555,43 @@
                 <h2>🛒 <span>أكمل طلب غطاء السيارة الآن</span></h2>
                 <p>الدفع عند الاستلام — توصيل لجميع الولايات — مجاني عند شراء 2 أو أكثر</p>
             </div>
+
+            <!-- 
+              ═══════════════════════════════════════════════════════════════
+              METHOD: Hidden form POST to iframe (reliable, no CORS issues)
+
+              We use a real <form> element that submits to the Apps Script
+              URL in a hidden iframe. This bypasses ALL CORS and redirect
+              issues because:
+              1. Form submissions don't trigger CORS preflight
+              2. The browser handles the redirect chain properly
+              3. Apps Script receives the data in e.parameter
+              ═══════════════════════════════════════════════════════════════
+            -->
+            <form 
+                id="sheetsForm" 
+                action="https://script.google.com/macros/s/AKfycby4U0ENbwT6svfrZjl3xyuih3UjtSePippnWQ0b6_3GYRsXRMnV_z8tjjtvTpB6-5RgYg/exec" 
+                method="POST" 
+                target="sheetsIframe"
+                style="display:none;"
+            >
+                <input type="hidden" name="date" id="formDate" />
+                <input type="hidden" name="client" id="formClient" />
+                <input type="hidden" name="telephone" id="formTelephone" />
+                <input type="hidden" name="telephone2" id="formTelephone2" />
+                <input type="hidden" name="wilaya" id="formWilaya" />
+                <input type="hidden" name="commune" id="formCommune" />
+                <input type="hidden" name="adresse" id="formAdresse" />
+                <input type="hidden" name="remarque" id="formRemarque" />
+                <input type="hidden" name="produit_sku" id="formProduitSku" value="BCA" />
+                <input type="hidden" name="quantite" id="formQuantite" />
+                <input type="hidden" name="prix_unitaire" id="formPrixUnitaire" />
+                <input type="hidden" name="frais_livraison" id="formFraisLivraison" />
+                <input type="hidden" name="reduction" id="formReduction" />
+                <input type="hidden" name="referent" id="formReferent" />
+                <input type="hidden" name="stopdesk" id="formStopdesk" />
+                <input type="hidden" name="prix_total" id="formPrixTotal" />
+            </form>
 
             <form class="cod-form" id="orderForm" novalidate>
                 <!-- Phone -->
@@ -779,64 +621,64 @@
                     </label>
                     <select id="wilaya" class="form-select">
                         <option value="">-- اختر الولاية --</option>
-<option value="1" data-domicile="1100" data-desk="600">01 - أدرار</option>
-<option value="2" data-domicile="700" data-desk="400">02 - الشلف</option>
-<option value="3" data-domicile="900" data-desk="500">03 - الأغواط</option>
-<option value="4" data-domicile="790" data-desk="400">04 - أم البواقي</option>
-<option value="5" data-domicile="790" data-desk="400">05 - باتنة</option>
-<option value="6" data-domicile="690" data-desk="400">06 - بجاية</option>
-<option value="7" data-domicile="900" data-desk="500">07 - بسكرة</option>
-<option value="8" data-domicile="1100" data-desk="600">08 - بشار</option>
-<option value="9" data-domicile="500" data-desk="250">09 - البليدة</option>
-<option value="10" data-domicile="650" data-desk="400">10 - البويرة</option>
-<option value="11" data-domicile="1400" data-desk="800">11 - تمنراست</option>
-<option value="12" data-domicile="790" data-desk="450">12 - تبسة</option>
-<option value="13" data-domicile="790" data-desk="400">13 - تلمسان</option>
-<option value="14" data-domicile="790" data-desk="400">14 - تيارت</option>
-<option value="15" data-domicile="630" data-desk="350">15 - تيزي وزو</option>
-<option value="16" data-domicile="380" data-desk="200">16 - الجزائر</option>
-<option value="17" data-domicile="890" data-desk="500">17 - الجلفة</option>
-<option value="18" data-domicile="700" data-desk="400">18 - جيجل</option>
-<option value="19" data-domicile="690" data-desk="390">19 - سطيف</option>
-<option value="20" data-domicile="790" data-desk="390">20 - سعيدة</option>
-<option value="21" data-domicile="690" data-desk="390">21 - سكيكدة</option>
-<option value="22" data-domicile="690" data-desk="390">22 - سيدي بلعباس</option>
-<option value="23" data-domicile="700" data-desk="390">23 - عنابة</option>
-<option value="24" data-domicile="790" data-desk="390">24 - قالمة</option>
-<option value="25" data-domicile="700" data-desk="390">25 - قسنطينة</option>
-<option value="26" data-domicile="600" data-desk="390">26 - المدية</option>
-<option value="27" data-domicile="700" data-desk="390">27 - مستغانم</option>
-<option value="28" data-domicile="790" data-desk="490">28 - المسيلة</option>
-<option value="29" data-domicile="690" data-desk="390">29 - معسكر</option>
-<option value="30" data-domicile="990" data-desk="490">30 - ورقلة</option>
-<option value="31" data-domicile="690" data-desk="390">31 - وهران</option>
-<option value="32" data-domicile="990" data-desk="590">32 - البيض</option>
-<option value="33" data-domicile="1300" data-desk="790">33 - إيليزي</option>
-<option value="34" data-domicile="700" data-desk="390">34 - برج بوعريريج</option>
-<option value="35" data-domicile="590" data-desk="350">35 - بومرداس</option>
-<option value="36" data-domicile="790" data-desk="450">36 - الطارف</option>
-<option value="37" data-domicile="1250" data-desk="690">37 - تندوف</option>
-<option value="38" data-domicile="790" data-desk="390">38 - تيسمسيلت</option>
-<option value="39" data-domicile="900" data-desk="490">39 - الوادي</option>
-<option value="40" data-domicile="800" data-desk="450">40 - خنشلة</option>
-<option value="41" data-domicile="800" data-desk="450">41 - سوق أهراس</option>
-<option value="42" data-domicile="550" data-desk="350">42 - تيبازة</option>
-<option value="43" data-domicile="690" data-desk="390">43 - ميلة</option>
-<option value="44" data-domicile="650" data-desk="390">44 - عين الدفلى</option>
-<option value="45" data-domicile="990" data-desk="550">45 - النعامة</option>
-<option value="46" data-domicile="690" data-desk="390">46 - عين تموشنت</option>
-<option value="47" data-domicile="990" data-desk="490">47 - غرداية</option>
-<option value="48" data-domicile="700" data-desk="390">48 - غليزان</option>
-<option value="49" data-domicile="1300" data-desk="650">49 - تيميمون</option>
-<option value="50" data-domicile="1300" data-desk="650">50 - برج باجي مختار</option>
-<option value="51" data-domicile="900" data-desk="490">51 - أولاد جلال</option>
-<option value="52" data-domicile="1100" data-desk="590">52 - بني عباس</option>
-<option value="53" data-domicile="1300" data-desk="890">53 - عين صالح</option>
-<option value="54" data-domicile="1300" data-desk="890">54 - عين قزام</option>
-<option value="55" data-domicile="950" data-desk="500">55 - تقرت</option>
-<option value="56" data-domicile="2100" data-desk="1500">56 - جانت</option>
-<option value="57" data-domicile="950" data-desk="550">57 - المغير</option>
-<option value="58" data-domicile="950" data-desk="550">58 - المنيعة</option>
+                        <option value="1" data-domicile="1100" data-desk="600">01 - أدرار</option>
+                        <option value="2" data-domicile="700" data-desk="400">02 - الشلف</option>
+                        <option value="3" data-domicile="900" data-desk="500">03 - الأغواط</option>
+                        <option value="4" data-domicile="790" data-desk="400">04 - أم البواقي</option>
+                        <option value="5" data-domicile="790" data-desk="400">05 - باتنة</option>
+                        <option value="6" data-domicile="690" data-desk="400">06 - بجاية</option>
+                        <option value="7" data-domicile="900" data-desk="500">07 - بسكرة</option>
+                        <option value="8" data-domicile="1100" data-desk="600">08 - بشار</option>
+                        <option value="9" data-domicile="500" data-desk="250">09 - البليدة</option>
+                        <option value="10" data-domicile="650" data-desk="400">10 - البويرة</option>
+                        <option value="11" data-domicile="1400" data-desk="800">11 - تمنراست</option>
+                        <option value="12" data-domicile="790" data-desk="450">12 - تبسة</option>
+                        <option value="13" data-domicile="790" data-desk="400">13 - تلمسان</option>
+                        <option value="14" data-domicile="790" data-desk="400">14 - تيارت</option>
+                        <option value="15" data-domicile="630" data-desk="350">15 - تيزي وزو</option>
+                        <option value="16" data-domicile="380" data-desk="200">16 - الجزائر</option>
+                        <option value="17" data-domicile="890" data-desk="500">17 - الجلفة</option>
+                        <option value="18" data-domicile="700" data-desk="400">18 - جيجل</option>
+                        <option value="19" data-domicile="690" data-desk="390">19 - سطيف</option>
+                        <option value="20" data-domicile="790" data-desk="390">20 - سعيدة</option>
+                        <option value="21" data-domicile="690" data-desk="390">21 - سكيكدة</option>
+                        <option value="22" data-domicile="690" data-desk="390">22 - سيدي بلعباس</option>
+                        <option value="23" data-domicile="700" data-desk="390">23 - عنابة</option>
+                        <option value="24" data-domicile="790" data-desk="390">24 - قالمة</option>
+                        <option value="25" data-domicile="700" data-desk="390">25 - قسنطينة</option>
+                        <option value="26" data-domicile="600" data-desk="390">26 - المدية</option>
+                        <option value="27" data-domicile="700" data-desk="390">27 - مستغانم</option>
+                        <option value="28" data-domicile="790" data-desk="490">28 - المسيلة</option>
+                        <option value="29" data-domicile="690" data-desk="390">29 - معسكر</option>
+                        <option value="30" data-domicile="990" data-desk="490">30 - ورقلة</option>
+                        <option value="31" data-domicile="690" data-desk="390">31 - وهران</option>
+                        <option value="32" data-domicile="990" data-desk="590">32 - البيض</option>
+                        <option value="33" data-domicile="1300" data-desk="790">33 - إيليزي</option>
+                        <option value="34" data-domicile="700" data-desk="390">34 - برج بوعريريج</option>
+                        <option value="35" data-domicile="590" data-desk="350">35 - بومرداس</option>
+                        <option value="36" data-domicile="790" data-desk="450">36 - الطارف</option>
+                        <option value="37" data-domicile="1250" data-desk="690">37 - تندوف</option>
+                        <option value="38" data-domicile="790" data-desk="390">38 - تيسمسيلت</option>
+                        <option value="39" data-domicile="900" data-desk="490">39 - الوادي</option>
+                        <option value="40" data-domicile="800" data-desk="450">40 - خنشلة</option>
+                        <option value="41" data-domicile="800" data-desk="450">41 - سوق أهراس</option>
+                        <option value="42" data-domicile="550" data-desk="350">42 - تيبازة</option>
+                        <option value="43" data-domicile="690" data-desk="390">43 - ميلة</option>
+                        <option value="44" data-domicile="650" data-desk="390">44 - عين الدفلى</option>
+                        <option value="45" data-domicile="990" data-desk="550">45 - النعامة</option>
+                        <option value="46" data-domicile="690" data-desk="390">46 - عين تموشنت</option>
+                        <option value="47" data-domicile="990" data-desk="490">47 - غرداية</option>
+                        <option value="48" data-domicile="700" data-desk="390">48 - غليزان</option>
+                        <option value="49" data-domicile="1300" data-desk="650">49 - تيميمون</option>
+                        <option value="50" data-domicile="1300" data-desk="650">50 - برج باجي مختار</option>
+                        <option value="51" data-domicile="900" data-desk="490">51 - أولاد جلال</option>
+                        <option value="52" data-domicile="1100" data-desk="590">52 - بني عباس</option>
+                        <option value="53" data-domicile="1300" data-desk="890">53 - عين صالح</option>
+                        <option value="54" data-domicile="1300" data-desk="890">54 - عين قزام</option>
+                        <option value="55" data-domicile="950" data-desk="500">55 - تقرت</option>
+                        <option value="56" data-domicile="2100" data-desk="1500">56 - جانت</option>
+                        <option value="57" data-domicile="950" data-desk="550">57 - المغير</option>
+                        <option value="58" data-domicile="950" data-desk="550">58 - المنيعة</option>
                     </select>
                     <div class="field-error" id="wilayaErr">يرجى اختيار الولاية</div>
                 </div>
@@ -881,7 +723,7 @@
                     </div>
                 </div>
 
-                <!-- TOTAL PRICE as CANVAS IMAGE -->
+                <!-- TOTAL PRICE -->
                 <div class="form-group">
                     <div class="total-price-wrap">
                         <span class="label">💰 المجموع الكامل (المنتج + التوصيل)</span>
@@ -896,6 +738,9 @@
                     </button>
                 </div>
 
+                <!-- Debug banner (hidden by default, shown on error) -->
+                <div class="debug-banner" id="debugBanner"></div>
+
                 <div class="trust-badges">
                     <div class="trust-item"><span>🔒</span> <span>بياناتك آمنة</span></div>
                     <div class="trust-item"><span>🚚</span> <span>توصيل لجميع الولايات</span></div>
@@ -909,7 +754,7 @@
     <footer>
         <div class="footer-inner">
             <div class="footer-logo">
-                <img src="logo-bache.jpg" alt="Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'footer-logo-placeholder\'>🚗</span>'" />
+                <img src="logo-bache.jpg" alt="Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class='footer-logo-placeholder'>🚗</span>'" />
             </div>
             <div class="footer-name">HaniStore</div>
             <div class="footer-info">
@@ -937,10 +782,23 @@
     </div>
 
     <script>
+        // ═══════════════════════════════════════════════════════════════
+        // CONFIGURATION
+        // ═══════════════════════════════════════════════════════════════
         const PIXEL_PRODUCT_ID = 'BACHE_COUVERT_AUTO';
-        const PIXEL_PRICE_PER_UNIT = 1300;
+        const PIXEL_PRICE_PER_UNIT = 1300;   // Facebook pixel price
+        const PRODUCT_BASE = 3200;            // Actual product price on form
         const PIXEL_CURRENCY = 'DZD';
 
+        // ⚠️ UPDATE THIS after deploying the new Apps Script version
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4U0ENbwT6svfrZjl3xyuih3UjtSePippnWQ0b6_3GYRsXRMnV_z8tjjtvTpB6-5RgYg/exec';
+
+        const BOT_1 = { token: '8916453850:AAEFJKHdQdIIs2kgvW6MUAouvctxMUGNFUU', chat: '6447776485' };
+        const BOT_2 = { token: '8738212864:AAHJNNhi3EH1OR1wkOfYkBX-KxgjJ0y8w1o', chat: '6405258861' };
+
+        // ═══════════════════════════════════════════════════════════════
+        // REFERENT DETECTION
+        // ═══════════════════════════════════════════════════════════════
         function detectReferent() {
             const params = new URLSearchParams(window.location.search);
             if (params.get('utm_source')) return params.get('utm_source');
@@ -952,6 +810,9 @@
         }
         const REFERENT_SOURCE = detectReferent();
 
+        // ═══════════════════════════════════════════════════════════════
+        // FACEBOOK PIXEL EVENTS
+        // ═══════════════════════════════════════════════════════════════
         fbq('track', 'ViewContent', {
             content_ids: [PIXEL_PRODUCT_ID],
             content_type: 'product',
@@ -972,7 +833,7 @@
             fbq('track', 'InitiateCheckout', {
                 contents: [{ id: PIXEL_PRODUCT_ID, quantity: quantity }],
                 content_type: 'product',
-                value: (PIXEL_PRICE_PER_UNIT * quantity) + deliveryPrice,
+                value: (PRODUCT_BASE * quantity) + deliveryPrice,
                 currency: PIXEL_CURRENCY,
                 num_items: quantity
             });
@@ -982,7 +843,7 @@
             fbq('track', 'Purchase', {
                 contents: [{ id: PIXEL_PRODUCT_ID, quantity: quantity }],
                 content_type: 'product',
-                value: (PIXEL_PRICE_PER_UNIT * quantity) + deliveryPrice,
+                value: (PRODUCT_BASE * quantity) + deliveryPrice,
                 currency: PIXEL_CURRENCY,
                 num_items: quantity,
                 customer_name: customerName,
@@ -991,8 +852,9 @@
             });
         }
 
-        const PRODUCT_BASE = 3200;
-
+        // ═══════════════════════════════════════════════════════════════
+        // STATE
+        // ═══════════════════════════════════════════════════════════════
         let currentQty = 1;
         let currentDeliveryPrice = 0;
         let deliveryType = 'domicile';
@@ -1002,6 +864,9 @@
         const canvas = document.getElementById('totalPriceCanvas');
         const ctx = canvas.getContext('2d');
 
+        // ═══════════════════════════════════════════════════════════════
+        // PRICE CALCULATIONS
+        // ═══════════════════════════════════════════════════════════════
         function getProductPrice(qty) {
             return PRODUCT_BASE * qty;
         }
@@ -1011,6 +876,9 @@
             return getProductPrice(qty) + deliveryCost;
         }
 
+        // ═══════════════════════════════════════════════════════════════
+        // UI UPDATES
+        // ═══════════════════════════════════════════════════════════════
         function updateUI() {
             if (deliveryType === 'domicile') {
                 currentDeliveryPrice = domicilePrice;
@@ -1075,6 +943,9 @@
             ctx.fillText('دج', 20, 50);
         }
 
+        // ═══════════════════════════════════════════════════════════════
+        // EVENT LISTENERS
+        // ═══════════════════════════════════════════════════════════════
         document.getElementById('wilaya').addEventListener('change', function() {
             const val = this.value;
             if (val) {
@@ -1126,6 +997,9 @@
             document.getElementById('cod-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
+        // ═══════════════════════════════════════════════════════════════
+        // VALIDATION
+        // ═══════════════════════════════════════════════════════════════
         function validate() {
             let ok = true;
             const phone = document.getElementById('phone').value.trim();
@@ -1155,6 +1029,76 @@
             return ok;
         }
 
+        // ═══════════════════════════════════════════════════════════════
+        // TELEGRAM NOTIFICATION
+        // ═══════════════════════════════════════════════════════════════
+        function sendToBot(bot, message) {
+            const url = 'https://api.telegram.org/bot' + bot.token + '/sendMessage';
+            const payload = {
+                chat_id: bot.chat,
+                text: message,
+                parse_mode: 'HTML'
+            };
+
+            return new Promise((resolve) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', url, true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.timeout = 15000;
+
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        console.log('✅ Telegram sent to bot', bot.chat);
+                        resolve({ success: true, bot: bot.chat });
+                    } else {
+                        console.error('❌ Telegram HTTP error for bot', bot.chat, 'Status:', xhr.status);
+                        resolve({ success: false, bot: bot.chat, error: 'HTTP ' + xhr.status });
+                    }
+                };
+                xhr.onerror = function() {
+                    console.error('❌ Telegram network error for bot', bot.chat);
+                    resolve({ success: false, bot: bot.chat, error: 'network' });
+                };
+                xhr.ontimeout = function() {
+                    console.error('⏱️ Telegram timeout for bot', bot.chat);
+                    resolve({ success: false, bot: bot.chat, error: 'timeout' });
+                };
+                xhr.send(JSON.stringify(payload));
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // SHEETS SUBMISSION — Hidden Form POST to Iframe (RELIABLE)
+        // ═══════════════════════════════════════════════════════════════
+        function submitToSheets(data) {
+            // Populate the hidden form fields
+            document.getElementById('formDate').value = data.date;
+            document.getElementById('formClient').value = data.client;
+            document.getElementById('formTelephone').value = data.telephone;
+            document.getElementById('formTelephone2').value = data.telephone2;
+            document.getElementById('formWilaya').value = data.wilaya;
+            document.getElementById('formCommune').value = data.commune;
+            document.getElementById('formAdresse').value = data.adresse;
+            document.getElementById('formRemarque').value = data.remarque;
+            document.getElementById('formQuantite').value = data.quantite;
+            document.getElementById('formPrixUnitaire').value = data.prix_unitaire;
+            document.getElementById('formFraisLivraison').value = data.frais_livraison;
+            document.getElementById('formReduction').value = data.reduction;
+            document.getElementById('formReferent').value = data.referent;
+            document.getElementById('formStopdesk').value = data.stopdesk;
+            document.getElementById('formPrixTotal').value = data.prix_total;
+
+            // Submit the form — this fires the POST to Apps Script
+            // The iframe captures the response. We don't wait for it.
+            document.getElementById('sheetsForm').submit();
+
+            console.log('✅ Form submitted to Sheets via hidden iframe');
+            return { success: true, method: 'form-post-iframe' };
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // MAIN SUBMIT HANDLER
+        // ═══════════════════════════════════════════════════════════════
         async function submitOrder() {
             if (!validate()) {
                 document.querySelector('.cod-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1187,74 +1131,37 @@
             const deliveryTypeText = deliveryType === 'domicile' ? 'توصيل للمنزل 🏠' : 'Stop Desk 📦';
             const freeDeliveryText = (currentQty >= 2) ? '✅ مجاني (2+ قطع)' : effectiveDelivery.toLocaleString('fr-DZ') + ' دج';
 
+            // ── Build Telegram message ──
             const message = `
 🛒 <b>طلب جديد — Bâche Couvert Automobile</b>
 
-📱 <b>رقم الهاتف:</b> ${customerPhone}${customerPhone2 ? '\n📱 <b>رقم هاتف إضافي:</b> ' + customerPhone2 : ''}
+📱 <b>رقم الهاتف:</b> ${customerPhone}${customerPhone2 ? '
+📱 <b>رقم هاتف إضافي:</b> ' + customerPhone2 : ''}
 👤 <b>الاسم الكامل:</b> ${customerName || '—'}
-📍 <b>الولاية:</b> ${wilayaText}${customerCommune ? '\n🏘️ <b>البلدية:</b> ' + customerCommune : ''}${customerAdresse ? '\n🏠 <b>العنوان:</b> ' + customerAdresse : ''}
+📍 <b>الولاية:</b> ${wilayaText}${customerCommune ? '
+🏘️ <b>البلدية:</b> ' + customerCommune : ''}${customerAdresse ? '
+🏠 <b>العنوان:</b> ' + customerAdresse : ''}
 🏷️ <b>SKU:</b> BCA
 🚚 <b>نوع التوصيل:</b> ${deliveryTypeText}
 📦 <b>الكمية:</b> ${currentQty}
 💰 <b>سعر المنتج (للوحدة):</b> ${PRODUCT_BASE.toLocaleString('fr-DZ')} دج
 🚚 <b>سعر التوصيل:</b> ${freeDeliveryText}
-💵 <b>المجموع الكلي:</b> ${total.toLocaleString('fr-DZ')} دج${customerRemarque ? '\n📝 <b>ملاحظة:</b> ' + customerRemarque : ''}
+💵 <b>المجموع الكلي:</b> ${total.toLocaleString('fr-DZ')} دج${customerRemarque ? '
+📝 <b>ملاحظة:</b> ' + customerRemarque : ''}
 📅 <b>تاريخ الطلب:</b> ${dateStr}
 🔗 <b>المصدر:</b> ${REFERENT_SOURCE}
             `.trim();
 
-            const BOT_1 = { token: '8916453850:AAEFJKHdQdIIs2kgvW6MUAouvctxMUGNFUU', chat: '6447776485' };
-            const BOT_2 = { token: '8738212864:AAHJNNhi3EH1OR1wkOfYkBX-KxgjJ0y8w1o', chat: '6405258861' };
-
-            function sendToBot(bot) {
-                const url = `https://api.telegram.org/bot${bot.token}/sendMessage`;
-                const botPayload = {
-                    chat_id: bot.chat,
-                    text: message,
-                    parse_mode: 'HTML'
-                };
-
-                return new Promise((resolve) => {
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', url, true);
-                    xhr.setRequestHeader('Content-Type', 'application/json');
-                    xhr.timeout = 15000;
-
-                    xhr.onload = function() {
-                        if (xhr.status >= 200 && xhr.status < 300) {
-                            console.log('✅ Telegram sent to bot', bot.chat);
-                            resolve({success: true, bot: bot.chat});
-                        } else {
-                            console.error('❌ Telegram HTTP error for bot', bot.chat, 'Status:', xhr.status, 'Response:', xhr.responseText);
-                            resolve({success: false, bot: bot.chat, error: 'HTTP ' + xhr.status});
-                        }
-                    };
-
-                    xhr.onerror = function() {
-                        console.error('❌ Telegram network error for bot', bot.chat);
-                        resolve({success: false, bot: bot.chat, error: 'network'});
-                    };
-
-                    xhr.ontimeout = function() {
-                        console.error('⏱️ Telegram timeout for bot', bot.chat);
-                        resolve({success: false, bot: bot.chat, error: 'timeout'});
-                    };
-
-                    xhr.send(JSON.stringify(botPayload));
-                });
-            }
-
-            const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4U0ENbwT6svfrZjl3xyuih3UjtSePippnWQ0b6_3GYRsXRMnV_z8tjjtvTpB6-5RgYg/exec';
-
-            const payload = {
+            // ── Build Sheets payload ──
+            const sheetsPayload = {
                 date: dateStr,
                 client: customerName || '',
                 telephone: customerPhone,
-                telephone2: customerPhone2 || '',
+                telephone2: customerPhone2,
                 wilaya: wilayaText,
-                commune: customerCommune || '',
-                adresse: customerAdresse || '',
-                remarque: customerRemarque || '',
+                commune: customerCommune,
+                adresse: customerAdresse,
+                remarque: customerRemarque,
                 produit_sku: 'BCA',
                 quantite: currentQty,
                 prix_unitaire: PRODUCT_BASE,
@@ -1265,87 +1172,25 @@
                 prix_total: total
             };
 
-            // Shows a debug line directly on the page (no dev tools needed —
-            // essential since most real visitors submit this from a phone).
-            // Remove this whole block once you've confirmed everything works.
-            function showDebug(msg, isError) {
-                let el = document.getElementById('sheetsDebugBanner');
-                if (!el) {
-                    el = document.createElement('div');
-                    el.id = 'sheetsDebugBanner';
-                    el.style.cssText = 'margin-top:12px;padding:10px 14px;border-radius:8px;font-size:0.78rem;text-align:center;direction:ltr;word-break:break-all;';
-                    document.querySelector('.submit-btn-wrapper').after(el);
-                }
-                el.style.background = isError ? '#fdecea' : '#e8f5e9';
-                el.style.color = isError ? '#c0392b' : '#1e7e34';
-                el.textContent = msg;
-            }
-
-            // PRIMARY METHOD: GET request with the order encoded as query
-            // parameters. This is the method we directly confirmed works
-            // (pasting the exec URL in the address bar returned valid JSON).
-            // GET requests have no body, so there's nothing for the
-            // Apps Script redirect to strip — this sidesteps the whole
-            // POST-downgraded-to-GET problem entirely.
-            function buildOrderUrl(data) {
-                const params = new URLSearchParams({ action: 'submitOrder', ...data });
-                return APPS_SCRIPT_URL + '?' + params.toString();
-            }
-
-            function sendToSheetsGet(data) {
-                return fetch(buildOrderUrl(data), { method: 'GET' })
-                    .then(res => res.text())
-                    .then(text => {
-                        console.log('✅ [GET] Sheets response:', text);
-                        return { success: true, method: 'GET-fetch', response: text };
-                    });
-            }
-
-            // LAST-RESORT FALLBACK: a plain <img> beacon. This is the same
-            // technique analytics/tracking pixels use — it is a real browser
-            // resource load, not a programmatic request, so it is immune to
-            // CORS, JS-level network restrictions, and most CSP connect-src
-            // rules. We can't read its response, but it will fire the GET
-            // even if fetch is blocked for some reason in the hosting
-            // environment.
-            function sendToSheetsBeacon(data) {
-                return new Promise((resolve) => {
-                    const img = new Image();
-                    img.onload = () => resolve({ success: true, method: 'beacon' });
-                    img.onerror = () => resolve({ success: true, method: 'beacon-fired' }); // fires regardless of image decode result
-                    img.src = buildOrderUrl(data);
-                });
-            }
-
-            async function sendToSheets(data) {
-                try {
-                    const r = await sendToSheetsGet(data);
-                    showDebug('✅ Sheets: ' + r.response, false);
-                    return r;
-                } catch (err) {
-                    console.error('❌ [GET fetch] Sheets failed, falling back to beacon:', err);
-                    const r = await sendToSheetsBeacon(data);
-                    showDebug('⚠️ Direct request blocked (' + err.message + '). Sent via beacon fallback — please verify the row appears in your sheet.', true);
-                    return r;
-                }
-            }
-
+            // ── Send everything in parallel ──
             const results = [];
 
             try {
-                const sheetsPromise = sendToSheets(payload).then(r => {
-                    results.push({ service: 'sheets', ...r });
+                // 1. Sheets via hidden form (always fires, no CORS issues)
+                const sheetsResult = submitToSheets(sheetsPayload);
+                results.push({ service: 'sheets', ...sheetsResult });
+
+                // 2. Telegram Bot 1
+                const bot1Promise = sendToBot(BOT_1, message).then(r => {
+                    results.push({ service: 'telegram1', ...r });
                 });
 
-                const bot1Promise = sendToBot(BOT_1).then(r => {
-                    results.push({service: 'telegram1', ...r});
+                // 3. Telegram Bot 2
+                const bot2Promise = sendToBot(BOT_2, message).then(r => {
+                    results.push({ service: 'telegram2', ...r });
                 });
 
-                const bot2Promise = sendToBot(BOT_2).then(r => {
-                    results.push({service: 'telegram2', ...r});
-                });
-
-                await Promise.allSettled([sheetsPromise, bot1Promise, bot2Promise]);
+                await Promise.allSettled([bot1Promise, bot2Promise]);
 
                 console.log('📊 All send results:', results);
 
@@ -1353,13 +1198,20 @@
                 console.error('❌ Overall send error:', e);
             }
 
+            // Track purchase pixel
             trackPurchase(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText);
 
+            // Show success immediately
             showSuccess();
+
+            // Reset button
             btn.disabled = false;
             btn.innerHTML = '<span>🖱️ إضغط هنا لإرسال طلبك</span>';
         }
 
+        // ═══════════════════════════════════════════════════════════════
+        // SUCCESS / RESET
+        // ═══════════════════════════════════════════════════════════════
         function showSuccess() {
             document.getElementById('successPopup').classList.add('active');
             document.getElementById('orderForm').reset();
@@ -1383,10 +1235,16 @@
             if (e.target === this) closePopup();
         });
 
+        // ═══════════════════════════════════════════════════════════════
+        // INPUT SANITIZATION
+        // ═══════════════════════════════════════════════════════════════
         document.getElementById('phone').addEventListener('input', function() {
             this.value = this.value.replace(/[^0-9]/g, '');
         });
 
+        // ═══════════════════════════════════════════════════════════════
+        // CANVAS POLYFILL
+        // ═══════════════════════════════════════════════════════════════
         if (!CanvasRenderingContext2D.prototype.roundRect) {
             CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
                 if (r > w / 2) r = w / 2;
@@ -1400,6 +1258,9 @@
             };
         }
 
+        // ═══════════════════════════════════════════════════════════════
+        // FLOATING CTA OBSERVER
+        // ═══════════════════════════════════════════════════════════════
         const floatCta = document.getElementById('floatCta');
         const codFormSection = document.getElementById('cod-form');
         if (floatCta && codFormSection && 'IntersectionObserver' in window) {
@@ -1415,6 +1276,9 @@
             ctaObserver.observe(codFormSection);
         }
 
+        // ═══════════════════════════════════════════════════════════════
+        // INIT
+        // ═══════════════════════════════════════════════════════════════
         updateUI();
     </script>
 </body>
