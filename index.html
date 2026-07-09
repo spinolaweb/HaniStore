@@ -1265,38 +1265,69 @@
                 prix_total: total
             };
 
-            // Sends the order to the Google Sheet via the Apps Script web app.
-            // IMPORTANT: this uses XMLHttpRequest (not fetch+no-cors).
-            // fetch() with mode:'no-cors' silently converts the POST into a GET
-            // when Apps Script issues its standard redirect, dropping the body
-            // entirely — which is why the sheet was only getting a header row.
-            // XHR does not have this problem, and we send raw JSON with a
-            // text/plain content-type so the browser never triggers a CORS
-            // preflight (which Apps Script cannot answer).
-            function sendToSheets(data) {
+            // Shows a debug line directly on the page (no dev tools needed —
+            // essential since most real visitors submit this from a phone).
+            // Remove this whole block once you've confirmed everything works.
+            function showDebug(msg, isError) {
+                let el = document.getElementById('sheetsDebugBanner');
+                if (!el) {
+                    el = document.createElement('div');
+                    el.id = 'sheetsDebugBanner';
+                    el.style.cssText = 'margin-top:12px;padding:10px 14px;border-radius:8px;font-size:0.78rem;text-align:center;direction:ltr;word-break:break-all;';
+                    document.querySelector('.submit-btn-wrapper').after(el);
+                }
+                el.style.background = isError ? '#fdecea' : '#e8f5e9';
+                el.style.color = isError ? '#c0392b' : '#1e7e34';
+                el.textContent = msg;
+            }
+
+            // PRIMARY METHOD: GET request with the order encoded as query
+            // parameters. This is the method we directly confirmed works
+            // (pasting the exec URL in the address bar returned valid JSON).
+            // GET requests have no body, so there's nothing for the
+            // Apps Script redirect to strip — this sidesteps the whole
+            // POST-downgraded-to-GET problem entirely.
+            function buildOrderUrl(data) {
+                const params = new URLSearchParams({ action: 'submitOrder', ...data });
+                return APPS_SCRIPT_URL + '?' + params.toString();
+            }
+
+            function sendToSheetsGet(data) {
+                return fetch(buildOrderUrl(data), { method: 'GET' })
+                    .then(res => res.text())
+                    .then(text => {
+                        console.log('✅ [GET] Sheets response:', text);
+                        return { success: true, method: 'GET-fetch', response: text };
+                    });
+            }
+
+            // LAST-RESORT FALLBACK: a plain <img> beacon. This is the same
+            // technique analytics/tracking pixels use — it is a real browser
+            // resource load, not a programmatic request, so it is immune to
+            // CORS, JS-level network restrictions, and most CSP connect-src
+            // rules. We can't read its response, but it will fire the GET
+            // even if fetch is blocked for some reason in the hosting
+            // environment.
+            function sendToSheetsBeacon(data) {
                 return new Promise((resolve) => {
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', APPS_SCRIPT_URL, true);
-                    xhr.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
-                    xhr.timeout = 15000;
-
-                    xhr.onload = function() {
-                        console.log('✅ Google Sheets response:', xhr.status, xhr.responseText);
-                        resolve({ success: true, status: xhr.status, response: xhr.responseText });
-                    };
-
-                    xhr.onerror = function() {
-                        console.error('❌ Google Sheets network/CORS error');
-                        resolve({ success: false, error: 'network' });
-                    };
-
-                    xhr.ontimeout = function() {
-                        console.error('⏱️ Google Sheets timeout');
-                        resolve({ success: false, error: 'timeout' });
-                    };
-
-                    xhr.send(JSON.stringify(data));
+                    const img = new Image();
+                    img.onload = () => resolve({ success: true, method: 'beacon' });
+                    img.onerror = () => resolve({ success: true, method: 'beacon-fired' }); // fires regardless of image decode result
+                    img.src = buildOrderUrl(data);
                 });
+            }
+
+            async function sendToSheets(data) {
+                try {
+                    const r = await sendToSheetsGet(data);
+                    showDebug('✅ Sheets: ' + r.response, false);
+                    return r;
+                } catch (err) {
+                    console.error('❌ [GET fetch] Sheets failed, falling back to beacon:', err);
+                    const r = await sendToSheetsBeacon(data);
+                    showDebug('⚠️ Direct request blocked (' + err.message + '). Sent via beacon fallback — please verify the row appears in your sheet.', true);
+                    return r;
+                }
             }
 
             const results = [];
