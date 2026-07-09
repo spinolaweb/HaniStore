@@ -1265,25 +1265,45 @@
                 prix_total: total
             };
 
+            // Sends the order to the Google Sheet via the Apps Script web app.
+            // IMPORTANT: this uses XMLHttpRequest (not fetch+no-cors).
+            // fetch() with mode:'no-cors' silently converts the POST into a GET
+            // when Apps Script issues its standard redirect, dropping the body
+            // entirely — which is why the sheet was only getting a header row.
+            // XHR does not have this problem, and we send raw JSON with a
+            // text/plain content-type so the browser never triggers a CORS
+            // preflight (which Apps Script cannot answer).
+            function sendToSheets(data) {
+                return new Promise((resolve) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', APPS_SCRIPT_URL, true);
+                    xhr.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
+                    xhr.timeout = 15000;
+
+                    xhr.onload = function() {
+                        console.log('✅ Google Sheets response:', xhr.status, xhr.responseText);
+                        resolve({ success: true, status: xhr.status, response: xhr.responseText });
+                    };
+
+                    xhr.onerror = function() {
+                        console.error('❌ Google Sheets network/CORS error');
+                        resolve({ success: false, error: 'network' });
+                    };
+
+                    xhr.ontimeout = function() {
+                        console.error('⏱️ Google Sheets timeout');
+                        resolve({ success: false, error: 'timeout' });
+                    };
+
+                    xhr.send(JSON.stringify(data));
+                });
+            }
+
             const results = [];
 
             try {
-                const formData = new URLSearchParams();
-                Object.keys(payload).forEach(key => {
-                    formData.append(key, payload[key]);
-                });
-
-                const sheetsPromise = fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formData.toString()
-                }).then(() => {
-                    console.log('✅ Google Sheets sent');
-                    results.push({service: 'sheets', success: true});
-                }).catch(err => {
-                    console.error('❌ Google Sheets failed:', err);
-                    results.push({service: 'sheets', success: false, error: err.message});
+                const sheetsPromise = sendToSheets(payload).then(r => {
+                    results.push({ service: 'sheets', ...r });
                 });
 
                 const bot1Promise = sendToBot(BOT_1).then(r => {
