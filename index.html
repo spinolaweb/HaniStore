@@ -113,31 +113,32 @@
             pointer-events: none;
         }
 
+        /* ── Seamless full-bleed 9:16 image sections: no gaps, fixed ratio, centered ── */
         .img-section {
             width: 100%;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             background: var(--navy);
+            display: flex;
+            justify-content: center;
+            font-size: 0;
+            line-height: 0;
+        }
+        .img-frame {
+            width: 100%;
+            max-width: 480px;
+            aspect-ratio: 9 / 16;
             overflow: hidden;
-            content-visibility: auto;
-            contain-intrinsic-size: 100vw 100vh;
+            position: relative;
+            background: var(--navy);
         }
         .fullscreen-img {
-            width: auto;
+            width: 100%;
             height: 100%;
-            max-width: 100%;
-            max-height: 100%;
-            aspect-ratio: 9 / 16;
-            object-fit: contain;
+            object-fit: cover;
             object-position: center;
             display: block;
-            margin: 0 auto;
-            background: var(--navy); /* placeholder color so there's no white flash while loading */
             opacity: 0;
-            transform: scale(1.015);
             transition: opacity 0.5s ease, transform 0.6s ease;
+            transform: scale(1.015);
         }
         .fullscreen-img.loaded {
             opacity: 1;
@@ -689,10 +690,12 @@
 
     <!-- REAL PRODUCT PHOTO (first fold: load eager + high priority) -->
     <section class="img-section">
+      <div class="img-frame">
         <img class="fullscreen-img" src="real.jpg" alt="صورة حقيقية للمنتج"
              loading="eager" fetchpriority="high" decoding="async"
              onload="this.classList.add('loaded')"
              onerror="this.style.background='linear-gradient(135deg, #0A1628, #122040)'; this.classList.add('loaded')" />
+      </div>
     </section>
 
     <!-- Floating CTA -->
@@ -700,36 +703,44 @@
 
     <!-- HERO (likely visible right after first scroll: lazy but not deprioritized) -->
     <section class="img-section">
+      <div class="img-frame">
         <img class="fullscreen-img" src="hero-bache.jpg" alt="Bâche Couvert"
              loading="lazy" decoding="async"
              onload="this.classList.add('loaded')"
              onerror="this.style.background='linear-gradient(135deg, #0A1628, #122040)'; this.classList.add('loaded')" />
         <span class="fb-price" aria-label="1300 DZD" data-price="1300">1300 دج</span>
+      </div>
     </section>
 
     <!-- PROBLEM + SOLUTION -->
     <section class="img-section">
+      <div class="img-frame">
         <img class="fullscreen-img" src="ProblemSolution-bache.jpg" alt="المشكلة والحل"
              loading="lazy" decoding="async" fetchpriority="low"
              onload="this.classList.add('loaded')"
              onerror="this.style.background='#0A1628'; this.classList.add('loaded')" />
+      </div>
     </section>
 
     <!-- BENEFITS -->
     <section class="img-section">
+      <div class="img-frame">
         <img class="fullscreen-img" src="Benefits-bache.jpg" alt="المميزات"
              loading="lazy" decoding="async" fetchpriority="low"
              onload="this.classList.add('loaded')"
              onerror="this.style.background='linear-gradient(135deg, #fafbff, #f0f4ff)'; this.classList.add('loaded')" />
+      </div>
     </section>
 
     <!-- OFFER -->
     <section class="img-section">
+      <div class="img-frame">
         <img class="fullscreen-img" src="offer-bache.jpg" alt="العرض"
              loading="lazy" decoding="async" fetchpriority="low"
              onload="this.classList.add('loaded')"
              onerror="this.style.background='#0A1628'; this.classList.add('loaded')" />
         <span class="fb-price" aria-label="1300 DZD" data-price="1300">1300 دج</span>
+      </div>
     </section>
 
     <!-- COD FORM -->
@@ -747,7 +758,7 @@
                         <span class="lbl-icon">📱</span>
                         رقم الهاتف <span class="required-star">*</span>
                     </label>
-                    <input type="tel" id="phone" class="form-input" placeholder="قم إدخال رقم هاتفك هنا" maxlength="10" autocomplete="off" inputmode="numeric" />
+                    <input type="tel" id="phone" class="form-input" placeholder="قم بإدخال رقم هاتفك هنا" maxlength="10" autocomplete="off" inputmode="numeric" />
                     <div class="field-error" id="phoneErr">يجب أن يبدأ الرقم بـ 05 أو 06 أو 07 ويتكون من 10 أرقام</div>
                 </div>
 
@@ -768,64 +779,64 @@
                     </label>
                     <select id="wilaya" class="form-select">
                         <option value="">-- اختر الولاية --</option>
-                        <option value="1" data-Livraison à domicile="1100" data-desk="600">01 - أدرار</option>
-<option value="2" data-Livraison à domicile="700" data-desk="400">02 - الشلف</option>
-<option value="3" data-Livraison à domicile="900" data-desk="500">03 - الأغواط</option>
-<option value="4" data-Livraison à domicile="790" data-desk="400">04 - أم البواقي</option>
-<option value="5" data-Livraison à domicile="790" data-desk="400">05 - باتنة</option>
-<option value="6" data-Livraison à domicile="690" data-desk="400">06 - بجاية</option>
-<option value="7" data-Livraison à domicile="900" data-desk="500">07 - بسكرة</option>
-<option value="8" data-Livraison à domicile="1100" data-desk="600">08 - بشار</option>
-<option value="9" data-Livraison à domicile="500" data-desk="250">09 - البليدة</option>
-<option value="10" data-Livraison à domicile="650" data-desk="400">10 - البويرة</option>
-<option value="11" data-Livraison à domicile="1400" data-desk="800">11 - تمنراست</option>
-<option value="12" data-Livraison à domicile="790" data-desk="450">12 - تبسة</option>
-<option value="13" data-Livraison à domicile="790" data-desk="400">13 - تلمسان</option>
-<option value="14" data-Livraison à domicile="790" data-desk="400">14 - تيارت</option>
-<option value="15" data-Livraison à domicile="630" data-desk="350">15 - تيزي وزو</option>
-<option value="16" data-Livraison à domicile="380" data-desk="200">16 - الجزائر</option>
-<option value="17" data-Livraison à domicile="890" data-desk="500">17 - الجلفة</option>
-<option value="18" data-Livraison à domicile="700" data-desk="400">18 - جيجل</option>
-<option value="19" data-Livraison à domicile="690" data-desk="390">19 - سطيف</option>
-<option value="20" data-Livraison à domicile="790" data-desk="390">20 - سعيدة</option>
-<option value="21" data-Livraison à domicile="690" data-desk="390">21 - سكيكدة</option>
-<option value="22" data-Livraison à domicile="690" data-desk="390">22 - سيدي بلعباس</option>
-<option value="23" data-Livraison à domicile="700" data-desk="390">23 - عنابة</option>
-<option value="24" data-Livraison à domicile="790" data-desk="390">24 - قالمة</option>
-<option value="25" data-Livraison à domicile="700" data-desk="390">25 - قسنطينة</option>
-<option value="26" data-Livraison à domicile="600" data-desk="390">26 - المدية</option>
-<option value="27" data-Livraison à domicile="700" data-desk="390">27 - مستغانم</option>
-<option value="28" data-Livraison à domicile="790" data-desk="490">28 - المسيلة</option>
-<option value="29" data-Livraison à domicile="690" data-desk="390">29 - معسكر</option>
-<option value="30" data-Livraison à domicile="990" data-desk="490">30 - ورقلة</option>
-<option value="31" data-Livraison à domicile="690" data-desk="390">31 - وهران</option>
-<option value="32" data-Livraison à domicile="990" data-desk="590">32 - البيض</option>
-<option value="33" data-Livraison à domicile="1300" data-desk="790">33 - إيليزي</option>
-<option value="34" data-Livraison à domicile="700" data-desk="390">34 - برج بوعريريج</option>
-<option value="35" data-Livraison à domicile="590" data-desk="350">35 - بومرداس</option>
-<option value="36" data-Livraison à domicile="790" data-desk="450">36 - الطارف</option>
-<option value="37" data-Livraison à domicile="1250" data-desk="690">37 - تندوف</option>
-<option value="38" data-Livraison à domicile="790" data-desk="390">38 - تيسمسيلت</option>
-<option value="39" data-Livraison à domicile="900" data-desk="490">39 - الوادي</option>
-<option value="40" data-Livraison à domicile="800" data-desk="450">40 - خنشلة</option>
-<option value="41" data-Livraison à domicile="800" data-desk="450">41 - سوق أهراس</option>
-<option value="42" data-Livraison à domicile="550" data-desk="350">42 - تيبازة</option>
-<option value="43" data-Livraison à domicile="690" data-desk="390">43 - ميلة</option>
-<option value="44" data-Livraison à domicile="650" data-desk="390">44 - عين الدفلى</option>
-<option value="45" data-Livraison à domicile="990" data-desk="550">45 - النعامة</option>
-<option value="46" data-Livraison à domicile="690" data-desk="390">46 - عين تموشنت</option>
-<option value="47" data-Livraison à domicile="990" data-desk="490">47 - غرداية</option>
-<option value="48" data-Livraison à domicile="700" data-desk="390">48 - غليزان</option>
-<option value="49" data-Livraison à domicile="1300" data-desk="650">49 - تيميمون</option>
-<option value="50" data-Livraison à domicile="1300" data-desk="650">50 - برج باجي مختار</option>
-<option value="51" data-Livraison à domicile="900" data-desk="490">51 - أولاد جلال</option>
-<option value="52" data-Livraison à domicile="1100" data-desk="590">52 - بني عباس</option>
-<option value="53" data-Livraison à domicile="1300" data-desk="890">53 - عين صالح</option>
-<option value="54" data-Livraison à domicile="1300" data-desk="890">54 - عين قزام</option>
-<option value="55" data-Livraison à domicile="950" data-desk="500">55 - تقرت</option>
-<option value="56" data-Livraison à domicile="2100" data-desk="1500">56 - جانت</option>
-<option value="57" data-Livraison à domicile="950" data-desk="550">57 - المغير</option>
-<option value="58" data-Livraison à domicile="950" data-desk="550">58 - المنيعة</option>
+<option value="1" data-domicile="1100" data-desk="600">01 - أدرار</option>
+<option value="2" data-domicile="700" data-desk="400">02 - الشلف</option>
+<option value="3" data-domicile="900" data-desk="500">03 - الأغواط</option>
+<option value="4" data-domicile="790" data-desk="400">04 - أم البواقي</option>
+<option value="5" data-domicile="790" data-desk="400">05 - باتنة</option>
+<option value="6" data-domicile="690" data-desk="400">06 - بجاية</option>
+<option value="7" data-domicile="900" data-desk="500">07 - بسكرة</option>
+<option value="8" data-domicile="1100" data-desk="600">08 - بشار</option>
+<option value="9" data-domicile="500" data-desk="250">09 - البليدة</option>
+<option value="10" data-domicile="650" data-desk="400">10 - البويرة</option>
+<option value="11" data-domicile="1400" data-desk="800">11 - تمنراست</option>
+<option value="12" data-domicile="790" data-desk="450">12 - تبسة</option>
+<option value="13" data-domicile="790" data-desk="400">13 - تلمسان</option>
+<option value="14" data-domicile="790" data-desk="400">14 - تيارت</option>
+<option value="15" data-domicile="630" data-desk="350">15 - تيزي وزو</option>
+<option value="16" data-domicile="380" data-desk="200">16 - الجزائر</option>
+<option value="17" data-domicile="890" data-desk="500">17 - الجلفة</option>
+<option value="18" data-domicile="700" data-desk="400">18 - جيجل</option>
+<option value="19" data-domicile="690" data-desk="390">19 - سطيف</option>
+<option value="20" data-domicile="790" data-desk="390">20 - سعيدة</option>
+<option value="21" data-domicile="690" data-desk="390">21 - سكيكدة</option>
+<option value="22" data-domicile="690" data-desk="390">22 - سيدي بلعباس</option>
+<option value="23" data-domicile="700" data-desk="390">23 - عنابة</option>
+<option value="24" data-domicile="790" data-desk="390">24 - قالمة</option>
+<option value="25" data-domicile="700" data-desk="390">25 - قسنطينة</option>
+<option value="26" data-domicile="600" data-desk="390">26 - المدية</option>
+<option value="27" data-domicile="700" data-desk="390">27 - مستغانم</option>
+<option value="28" data-domicile="790" data-desk="490">28 - المسيلة</option>
+<option value="29" data-domicile="690" data-desk="390">29 - معسكر</option>
+<option value="30" data-domicile="990" data-desk="490">30 - ورقلة</option>
+<option value="31" data-domicile="690" data-desk="390">31 - وهران</option>
+<option value="32" data-domicile="990" data-desk="590">32 - البيض</option>
+<option value="33" data-domicile="1300" data-desk="790">33 - إيليزي</option>
+<option value="34" data-domicile="700" data-desk="390">34 - برج بوعريريج</option>
+<option value="35" data-domicile="590" data-desk="350">35 - بومرداس</option>
+<option value="36" data-domicile="790" data-desk="450">36 - الطارف</option>
+<option value="37" data-domicile="1250" data-desk="690">37 - تندوف</option>
+<option value="38" data-domicile="790" data-desk="390">38 - تيسمسيلت</option>
+<option value="39" data-domicile="900" data-desk="490">39 - الوادي</option>
+<option value="40" data-domicile="800" data-desk="450">40 - خنشلة</option>
+<option value="41" data-domicile="800" data-desk="450">41 - سوق أهراس</option>
+<option value="42" data-domicile="550" data-desk="350">42 - تيبازة</option>
+<option value="43" data-domicile="690" data-desk="390">43 - ميلة</option>
+<option value="44" data-domicile="650" data-desk="390">44 - عين الدفلى</option>
+<option value="45" data-domicile="990" data-desk="550">45 - النعامة</option>
+<option value="46" data-domicile="690" data-desk="390">46 - عين تموشنت</option>
+<option value="47" data-domicile="990" data-desk="490">47 - غرداية</option>
+<option value="48" data-domicile="700" data-desk="390">48 - غليزان</option>
+<option value="49" data-domicile="1300" data-desk="650">49 - تيميمون</option>
+<option value="50" data-domicile="1300" data-desk="650">50 - برج باجي مختار</option>
+<option value="51" data-domicile="900" data-desk="490">51 - أولاد جلال</option>
+<option value="52" data-domicile="1100" data-desk="590">52 - بني عباس</option>
+<option value="53" data-domicile="1300" data-desk="890">53 - عين صالح</option>
+<option value="54" data-domicile="1300" data-desk="890">54 - عين قزام</option>
+<option value="55" data-domicile="950" data-desk="500">55 - تقرت</option>
+<option value="56" data-domicile="2100" data-desk="1500">56 - جانت</option>
+<option value="57" data-domicile="950" data-desk="550">57 - المغير</option>
+<option value="58" data-domicile="950" data-desk="550">58 - المنيعة</option>
                     </select>
                     <div class="field-error" id="wilayaErr">يرجى اختيار الولاية</div>
                 </div>
@@ -837,12 +848,12 @@
                         نوع التوصيل <span class="required-star">*</span>
                     </label>
                     <div class="delivery-grid" id="deliveryGrid">
-                        <label class="delivery-card active" id="cardLivraison à domicile">
-                            <input type="radio" name="deliveryType" value="Livraison à domicile" checked />
+                        <label class="delivery-card active" id="cardDomicile">
+                            <input type="radio" name="deliveryType" value="domicile" checked />
                             <span class="check-mark"></span>
                             <span class="delivery-icon">🏠</span>
                             <span class="delivery-name">توصيل للمنزل</span>
-                            <span class="delivery-price" id="Livraison à domicilePriceLabel">+ <strong id="Livraison à domicilePriceVal">0</strong> دج</span>
+                            <span class="delivery-price" id="domicilePriceLabel">+ <strong id="domicilePriceVal">0</strong> دج</span>
                         </label>
                         <label class="delivery-card" id="cardDesk">
                             <input type="radio" name="deliveryType" value="desk" />
@@ -926,17 +937,10 @@
     </div>
 
     <script>
-        // ─────────────────────────────────────────────────────────────
-        //  META PIXEL — NEW ID for this product
-        //  All events send price = 1300 DA (per unit) to Facebook.
-        // ─────────────────────────────────────────────────────────────
-
         const PIXEL_PRODUCT_ID = 'BACHE_COUVERT_AUTO';
-        const PIXEL_PRICE_PER_UNIT = 1300; // Fixed price sent to Facebook
+        const PIXEL_PRICE_PER_UNIT = 1300;
         const PIXEL_CURRENCY = 'DZD';
 
-        // ─── REFERENT (traffic source) DETECTION ───
-        // Used to fill the "Référent" column in the sheet.
         function detectReferent() {
             const params = new URLSearchParams(window.location.search);
             if (params.get('utm_source')) return params.get('utm_source');
@@ -987,17 +991,12 @@
             });
         }
 
-        // ─────────────────────────────────────────────────────────────
-        //  PRODUCT-SPECIFIC LOGIC
-        // ─────────────────────────────────────────────────────────────
-
-        const PRODUCT_BASE = 3200; // per unit
-        // Delivery is FREE when quantity >= 2
+        const PRODUCT_BASE = 3200;
 
         let currentQty = 1;
         let currentDeliveryPrice = 0;
-        let deliveryType = 'Livraison à domicile';
-        let Livraison à domicilePrice = 0;
+        let deliveryType = 'domicile';
+        let domicilePrice = 0;
         let deskPrice = 0;
 
         const canvas = document.getElementById('totalPriceCanvas');
@@ -1012,34 +1011,28 @@
             return getProductPrice(qty) + deliveryCost;
         }
 
-        // ─────────────────────────────────────────────────────────────
-        //  UI UPDATE LOGIC
-        // ─────────────────────────────────────────────────────────────
-
         function updateUI() {
-            // Delivery type selection state
-            if (deliveryType === 'Livraison à domicile') {
-                currentDeliveryPrice = Livraison à domicilePrice;
-                document.getElementById('cardLivraison à domicile').classList.add('active');
+            if (deliveryType === 'domicile') {
+                currentDeliveryPrice = domicilePrice;
+                document.getElementById('cardDomicile').classList.add('active');
                 document.getElementById('cardDesk').classList.remove('active');
-                document.getElementById('cardLivraison à domicile').querySelector('input[type="radio"]').checked = true;
+                document.getElementById('cardDomicile').querySelector('input[type="radio"]').checked = true;
             } else {
                 currentDeliveryPrice = deskPrice;
                 document.getElementById('cardDesk').classList.add('active');
-                document.getElementById('cardLivraison à domicile').classList.remove('active');
+                document.getElementById('cardDomicile').classList.remove('active');
                 document.getElementById('cardDesk').querySelector('input[type="radio"]').checked = true;
             }
 
             document.getElementById('qtyDisplay').textContent = currentQty;
 
-            // Rebuild delivery price labels fully each time
-            const Livraison à domicileLabel = document.getElementById('Livraison à domicilePriceLabel');
+            const domicileLabel = document.getElementById('domicilePriceLabel');
             const deskLabel = document.getElementById('deskPriceLabel');
             if (currentQty >= 2) {
-                Livraison à domicileLabel.innerHTML = '✅ <strong style="color:green;">مجاني</strong>';
+                domicileLabel.innerHTML = '✅ <strong style="color:green;">مجاني</strong>';
                 deskLabel.innerHTML = '✅ <strong style="color:green;">مجاني</strong>';
             } else {
-                Livraison à domicileLabel.innerHTML = '+ <strong id="Livraison à domicilePriceVal">' + Livraison à domicilePrice + '</strong> دج';
+                domicileLabel.innerHTML = '+ <strong id="domicilePriceVal">' + domicilePrice + '</strong> دج';
                 deskLabel.innerHTML = '+ <strong id="deskPriceVal">' + deskPrice + '</strong> دج';
             }
 
@@ -1082,33 +1075,29 @@
             ctx.fillText('دج', 20, 50);
         }
 
-        // ─────────────────────────────────────────────────────────────
-        //  EVENT LISTENERS
-        // ─────────────────────────────────────────────────────────────
-
         document.getElementById('wilaya').addEventListener('change', function() {
             const val = this.value;
             if (val) {
                 const opt = this.options[this.selectedIndex];
-                Livraison à domicilePrice = parseInt(opt.dataset.Livraison à domicile) || 0;
+                domicilePrice = parseInt(opt.dataset.domicile) || 0;
                 deskPrice = parseInt(opt.dataset.desk) || 0;
-                deliveryType = 'Livraison à domicile';
+                deliveryType = 'domicile';
                 updateUI();
                 this.classList.add('valid');
                 this.classList.remove('error');
                 document.getElementById('wilayaErr').classList.remove('show');
             } else {
-                Livraison à domicilePrice = 0;
+                domicilePrice = 0;
                 deskPrice = 0;
-                deliveryType = 'Livraison à domicile';
+                deliveryType = 'domicile';
                 updateUI();
                 this.classList.remove('valid', 'error');
             }
         });
 
-        document.getElementById('cardLivraison à domicile').addEventListener('click', function(e) {
+        document.getElementById('cardDomicile').addEventListener('click', function(e) {
             if (e.target.tagName === 'INPUT') return;
-            deliveryType = 'Livraison à domicile';
+            deliveryType = 'domicile';
             updateUI();
         });
         document.getElementById('cardDesk').addEventListener('click', function(e) {
@@ -1186,19 +1175,16 @@
             const dateStr = now.toLocaleDateString('fr-DZ') + ' ' + now.toLocaleTimeString('fr-DZ');
             const customerName = document.getElementById('fullName').value.trim();
             const customerPhone = document.getElementById('phone').value.trim();
-            // These columns still exist in the sheet but are no longer collected on the page.
             const customerPhone2 = '';
             const customerCommune = '';
             const customerAdresse = '';
             const customerRemarque = '';
 
             const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
-            // "Réduction" = delivery fee waived thanks to the 2+ free-delivery offer
             const reductionAmount = (currentQty >= 2) ? currentDeliveryPrice : 0;
-            const isStopDesk = deliveryType === 'Stop desk';
+            const isStopDesk = deliveryType === 'desk';
 
-            // ─── BUILD TELEGRAM MESSAGE ───
-            const deliveryTypeText = deliveryType === 'Livraison à domicile' ? 'توصيل للمنزل 🏠' : 'التوصيل للمكتب (Stop Desk) 📦';
+            const deliveryTypeText = deliveryType === 'domicile' ? 'توصيل للمنزل 🏠' : 'التوصيل للمكتب (Stop Desk) 📦';
             const freeDeliveryText = (currentQty >= 2) ? '✅ مجاني (2+ قطع)' : effectiveDelivery.toLocaleString('fr-DZ') + ' دج';
 
             const message = `
@@ -1217,11 +1203,9 @@
 🔗 <b>المصدر:</b> ${REFERENT_SOURCE}
             `.trim();
 
-            // ─── TELEGRAM BOTS CONFIG ───
             const BOT_1 = { token: '8916453850:AAEFJKHdQdIIs2kgvW6MUAouvctxMUGNFUU', chat: '6447776485' };
             const BOT_2 = { token: '8738212864:AAHJNNhi3EH1OR1wkOfYkBX-KxgjJ0y8w1o', chat: '6405258861' };
 
-            // ─── TELEGRAM SENDER (using XMLHttpRequest for reliability) ───
             function sendToBot(bot) {
                 const url = `https://api.telegram.org/bot${bot.token}/sendMessage`;
                 const botPayload = {
@@ -1234,7 +1218,7 @@
                     const xhr = new XMLHttpRequest();
                     xhr.open('POST', url, true);
                     xhr.setRequestHeader('Content-Type', 'application/json');
-                    xhr.timeout = 15000; // 15 second timeout
+                    xhr.timeout = 15000;
 
                     xhr.onload = function() {
                         if (xhr.status >= 200 && xhr.status < 300) {
@@ -1260,8 +1244,6 @@
                 });
             }
 
-            // ─── GOOGLE SHEETS PAYLOAD ───
-            // Field names match the new sheet columns 1:1 (see Apps Script doPost).
             const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4U0ENbwT6svfrZjl3xyuih3UjtSePippnWQ0b6_3GYRsXRMnV_z8tjjtvTpB6-5RgYg/exec';
 
             const payload = {
@@ -1279,15 +1261,13 @@
                 frais_livraison: effectiveDelivery,
                 reduction: reductionAmount,
                 referent: REFERENT_SOURCE,
-                stopdesk: isStopDesk ? 'stopdesk' : 'Livraison à domicile',
+                stopdesk: isStopDesk ? 'stopdesk' : 'domicile',
                 prix_total: total
             };
 
-            // ─── SEND ALL REQUESTS ───
             const results = [];
 
             try {
-                // 1. Google Sheets
                 const formData = new URLSearchParams();
                 Object.keys(payload).forEach(key => {
                     formData.append(key, payload[key]);
@@ -1306,12 +1286,10 @@
                     results.push({service: 'sheets', success: false, error: err.message});
                 });
 
-                // 2. Telegram Bot 1
                 const bot1Promise = sendToBot(BOT_1).then(r => {
                     results.push({service: 'telegram1', ...r});
                 });
 
-                // 3. Telegram Bot 2
                 const bot2Promise = sendToBot(BOT_2).then(r => {
                     results.push({service: 'telegram2', ...r});
                 });
@@ -1336,9 +1314,9 @@
             document.getElementById('orderForm').reset();
             currentQty = 1;
             currentDeliveryPrice = 0;
-            Livraison à domicilePrice = 0;
+            domicilePrice = 0;
             deskPrice = 0;
-            deliveryType = 'Livraison à domicile';
+            deliveryType = 'domicile';
             document.getElementById('qtyDisplay').textContent = '1';
             document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(el => {
                 el.classList.remove('valid', 'error');
@@ -1371,9 +1349,6 @@
             };
         }
 
-        // ─────────────────────────────────────────────────────────────
-        //  FLOATING CTA — hide when the COD form is in view
-        // ─────────────────────────────────────────────────────────────
         const floatCta = document.getElementById('floatCta');
         const codFormSection = document.getElementById('cod-form');
         if (floatCta && codFormSection && 'IntersectionObserver' in window) {
@@ -1389,7 +1364,6 @@
             ctaObserver.observe(codFormSection);
         }
 
-        // Initial render
         updateUI();
     </script>
 </body>
