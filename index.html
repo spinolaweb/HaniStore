@@ -758,7 +758,7 @@
                         <span class="lbl-icon">📱</span>
                         رقم الهاتف <span class="required-star">*</span>
                     </label>
-                    <input type="tel" id="phone" class="form-input" placeholder="قم بإدخال رقم هاتفك هنا" maxlength="10" autocomplete="off" inputmode="numeric" />
+                    <input type="tel" id="phone" class="form-input" placeholder="قم إدخال رقم هاتفك هنا" maxlength="10" autocomplete="off" inputmode="numeric" />
                     <div class="field-error" id="phoneErr">يجب أن يبدأ الرقم بـ 05 أو 06 أو 07 ويتكون من 10 أرقام</div>
                 </div>
 
@@ -859,7 +859,7 @@
                             <input type="radio" name="deliveryType" value="desk" />
                             <span class="check-mark"></span>
                             <span class="delivery-icon">📦</span>
-                            <span class="delivery-name">التوصيل للمكتب</span>
+                            <span class="delivery-name">Stop Desk</span>
                             <span class="delivery-price" id="deskPriceLabel">+ <strong id="deskPriceVal">0</strong> دج</span>
                         </label>
                     </div>
@@ -1182,9 +1182,9 @@
 
             const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
             const reductionAmount = (currentQty >= 2) ? currentDeliveryPrice : 0;
-            const ismethode_de_livraison = deliveryType === 'Stop Desk';
+            const isStopDesk = deliveryType === 'desk';
 
-            const deliveryTypeText = deliveryType === 'domicile' ? 'توصيل للمنزل 🏠' : 'التوصيل للمكتب (Stop Desk) 📦';
+            const deliveryTypeText = deliveryType === 'domicile' ? 'توصيل للمنزل 🏠' : 'Stop Desk 📦';
             const freeDeliveryText = (currentQty >= 2) ? '✅ مجاني (2+ قطع)' : effectiveDelivery.toLocaleString('fr-DZ') + ' دج';
 
             const message = `
@@ -1261,7 +1261,7 @@
                 frais_livraison: effectiveDelivery,
                 reduction: reductionAmount,
                 referent: REFERENT_SOURCE,
-                methode_de_livraison: ismethode_de_livraison ? 'Stop desk' : 'Livraison à domicile',
+                stopdesk: isStopDesk ? 'stopdesk' : 'domicile',
                 prix_total: total
             };
 
