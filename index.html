@@ -1182,7 +1182,7 @@
 
             const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
             const reductionAmount = (currentQty >= 2) ? currentDeliveryPrice : 0;
-            const isméthode_de_livraison = deliveryType === 'Stop Desk';
+            const ismethode_de_livraison = deliveryType === 'Stop Desk';
 
             const deliveryTypeText = deliveryType === 'domicile' ? 'توصيل للمنزل 🏠' : 'التوصيل للمكتب (Stop Desk) 📦';
             const freeDeliveryText = (currentQty >= 2) ? '✅ مجاني (2+ قطع)' : effectiveDelivery.toLocaleString('fr-DZ') + ' دج';
@@ -1261,7 +1261,7 @@
                 frais_livraison: effectiveDelivery,
                 reduction: reductionAmount,
                 referent: REFERENT_SOURCE,
-                méthode_de_livraison: isméthode_de_livraison ? 'Stop desk' : 'Livraison à domicile',
+                methode_de_livraison: ismethode_de_livraison ? 'Stop desk' : 'Livraison à domicile',
                 prix_total: total
             };
 
