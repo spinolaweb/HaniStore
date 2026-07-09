@@ -151,13 +151,6 @@
             50% { box-shadow: 0 8px 50px rgba(232, 19, 42, 0.8); }
         }
 
-        /* ── Hidden iframe for form submission ── */
-        #sheetsIframe {
-            display: none;
-            width: 0; height: 0;
-            border: none;
-        }
-
         /* ── COD Section ── */
         .cod-section {
             background: linear-gradient(135deg, var(--navy) 0%, #0d2040 100%);
@@ -309,6 +302,7 @@
             color: var(--navy); padding: 12px; min-width: 60px;
         }
 
+        /* ── TOTAL PRICE — CSS-based (replaces broken canvas) ── */
         .total-price-wrap {
             background: linear-gradient(135deg, #fafbff, #f0f4ff);
             border-radius: 14px; padding: 18px 20px;
@@ -319,10 +313,41 @@
             font-size: 0.85rem; color: var(--gray);
             font-weight: 600; display: block; margin-bottom: 6px;
         }
-        #totalPriceCanvas {
-            display: block; margin: 0 auto;
-            max-width: 100%; height: auto;
-            border-radius: 8px; background: transparent;
+        .total-price-box {
+            background: linear-gradient(135deg, var(--gold), #E8A800);
+            border-radius: 12px;
+            padding: 14px 24px;
+            display: inline-block;
+            box-shadow: 0 4px 20px rgba(245, 197, 24, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        .total-price-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+            border-radius: 12px;
+            pointer-events: none;
+        }
+        .total-price-box .price-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: rgba(10, 22, 40, 0.7);
+            display: block;
+            margin-bottom: 2px;
+        }
+        .total-price-box .price-value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--navy);
+            line-height: 1.2;
+        }
+        .total-price-box .price-currency {
+            font-size: 1rem;
+            font-weight: 700;
+            color: rgba(10, 22, 40, 0.6);
+            margin-right: 4px;
         }
 
         .submit-btn-wrapper {
@@ -419,20 +444,6 @@
             font-size: 1rem; color: #155724; font-weight: 600;
         }
 
-        /* ── Debug banner ── */
-        .debug-banner {
-            margin-top: 12px; padding: 10px 14px;
-            border-radius: 8px; font-size: 0.78rem;
-            text-align: center; direction: ltr;
-            word-break: break-all; display: none;
-        }
-        .debug-banner.success {
-            background: #e8f5e9; color: #1e7e34; display: block;
-        }
-        .debug-banner.error {
-            background: #fdecea; color: #c0392b; display: block;
-        }
-
         footer {
             background: #060d1a;
             color: rgba(255, 255, 255, 0.7);
@@ -475,6 +486,7 @@
             .delivery-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
             .delivery-card { padding: 12px 10px; }
             .trust-badges { gap: 12px; }
+            .total-price-box .price-value { font-size: 1.6rem; }
         }
         @media (max-width: 480px) {
             .cod-section { padding: 60px 12px 100px; }
@@ -482,6 +494,8 @@
             .delivery-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
             .delivery-card .delivery-name { font-size: 0.82rem; }
             .popup-box { padding: 36px 20px; }
+            .total-price-box { padding: 12px 18px; }
+            .total-price-box .price-value { font-size: 1.4rem; }
         }
     </style>
 <base target="_blank">
@@ -544,11 +558,8 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!-- HIDDEN IFRAME — Target for form submission to Apps Script     -->
+    <!-- COD FORM — VISIBLE ORDER FORM                               -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <iframe name="sheetsIframe" id="sheetsIframe"></iframe>
-
-    <!-- COD FORM -->
     <section class="cod-section" id="cod-form">
         <div class="container">
             <div class="form-header">
@@ -556,44 +567,7 @@
                 <p>الدفع عند الاستلام — توصيل لجميع الولايات — مجاني عند شراء 2 أو أكثر</p>
             </div>
 
-            <!-- 
-              ═══════════════════════════════════════════════════════════════
-              METHOD: Hidden form POST to iframe (reliable, no CORS issues)
-
-              We use a real <form> element that submits to the Apps Script
-              URL in a hidden iframe. This bypasses ALL CORS and redirect
-              issues because:
-              1. Form submissions don't trigger CORS preflight
-              2. The browser handles the redirect chain properly
-              3. Apps Script receives the data in e.parameter
-              ═══════════════════════════════════════════════════════════════
-            -->
-            <form 
-                id="sheetsForm" 
-                action="https://script.google.com/macros/s/AKfycby4U0ENbwT6svfrZjl3xyuih3UjtSePippnWQ0b6_3GYRsXRMnV_z8tjjtvTpB6-5RgYg/exec" 
-                method="POST" 
-                target="sheetsIframe"
-                style="display:none;"
-            >
-                <input type="hidden" name="date" id="formDate" />
-                <input type="hidden" name="client" id="formClient" />
-                <input type="hidden" name="telephone" id="formTelephone" />
-                <input type="hidden" name="telephone2" id="formTelephone2" />
-                <input type="hidden" name="wilaya" id="formWilaya" />
-                <input type="hidden" name="commune" id="formCommune" />
-                <input type="hidden" name="adresse" id="formAdresse" />
-                <input type="hidden" name="remarque" id="formRemarque" />
-                <input type="hidden" name="produit_sku" id="formProduitSku" value="BCA" />
-                <input type="hidden" name="quantite" id="formQuantite" />
-                <input type="hidden" name="prix_unitaire" id="formPrixUnitaire" />
-                <input type="hidden" name="frais_livraison" id="formFraisLivraison" />
-                <input type="hidden" name="reduction" id="formReduction" />
-                <input type="hidden" name="referent" id="formReferent" />
-                <input type="hidden" name="stopdesk" id="formStopdesk" />
-                <input type="hidden" name="prix_total" id="formPrixTotal" />
-            </form>
-
-            <form class="cod-form" id="orderForm" novalidate>
+            <div class="cod-form" id="orderForm">
                 <!-- Phone -->
                 <div class="form-group">
                     <label class="form-label" for="phone">
@@ -690,14 +664,14 @@
                         نوع التوصيل <span class="required-star">*</span>
                     </label>
                     <div class="delivery-grid" id="deliveryGrid">
-                        <label class="delivery-card active" id="cardDomicile">
+                        <label class="delivery-card active" id="cardDomicile" onclick="selectDelivery('domicile')">
                             <input type="radio" name="deliveryType" value="domicile" checked />
                             <span class="check-mark"></span>
                             <span class="delivery-icon">🏠</span>
                             <span class="delivery-name">توصيل للمنزل</span>
                             <span class="delivery-price" id="domicilePriceLabel">+ <strong id="domicilePriceVal">0</strong> دج</span>
                         </label>
-                        <label class="delivery-card" id="cardDesk">
+                        <label class="delivery-card" id="cardDesk" onclick="selectDelivery('desk')">
                             <input type="radio" name="deliveryType" value="desk" />
                             <span class="check-mark"></span>
                             <span class="delivery-icon">📦</span>
@@ -723,11 +697,15 @@
                     </div>
                 </div>
 
-                <!-- TOTAL PRICE -->
+                <!-- TOTAL PRICE — CSS-based (replaces broken canvas) -->
                 <div class="form-group">
                     <div class="total-price-wrap">
                         <span class="label">💰 المجموع الكامل (المنتج + التوصيل)</span>
-                        <canvas id="totalPriceCanvas" width="400" height="72"></canvas>
+                        <div class="total-price-box">
+                            <span class="price-label">المجموع الكامل</span>
+                            <span class="price-value" id="totalPriceValue">3,200</span>
+                            <span class="price-currency">دج</span>
+                        </div>
                     </div>
                 </div>
 
@@ -738,15 +716,12 @@
                     </button>
                 </div>
 
-                <!-- Debug banner (hidden by default, shown on error) -->
-                <div class="debug-banner" id="debugBanner"></div>
-
                 <div class="trust-badges">
                     <div class="trust-item"><span>🔒</span> <span>بياناتك آمنة</span></div>
                     <div class="trust-item"><span>🚚</span> <span>توصيل لجميع الولايات</span></div>
                     <div class="trust-item"><span>💳</span> <span>دفع عند الاستلام</span></div>
                 </div>
-            </form>
+            </div>
         </div>
     </section>
 
@@ -781,13 +756,44 @@
         </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- HIDDEN FORM — Submits to Apps Script via iframe               -->
+    <!-- MUST be outside any other form, at the end of body            -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <iframe name="sheetsIframe" id="sheetsIframe" style="display:none;width:0;height:0;border:none;"></iframe>
+
+    <form 
+        id="sheetsForm" 
+        action="https://script.google.com/macros/s/AKfycby4U0ENbwT6svfrZjl3xyuih3UjtSePippnWQ0b6_3GYRsXRMnV_z8tjjtvTpB6-5RgYg/exec" 
+        method="POST" 
+        target="sheetsIframe"
+        style="display:none;"
+    >
+        <input type="hidden" name="date" id="formDate" />
+        <input type="hidden" name="client" id="formClient" />
+        <input type="hidden" name="telephone" id="formTelephone" />
+        <input type="hidden" name="telephone2" id="formTelephone2" />
+        <input type="hidden" name="wilaya" id="formWilaya" />
+        <input type="hidden" name="commune" id="formCommune" />
+        <input type="hidden" name="adresse" id="formAdresse" />
+        <input type="hidden" name="remarque" id="formRemarque" />
+        <input type="hidden" name="produit_sku" id="formProduitSku" value="BCA" />
+        <input type="hidden" name="quantite" id="formQuantite" />
+        <input type="hidden" name="prix_unitaire" id="formPrixUnitaire" />
+        <input type="hidden" name="frais_livraison" id="formFraisLivraison" />
+        <input type="hidden" name="reduction" id="formReduction" />
+        <input type="hidden" name="referent" id="formReferent" />
+        <input type="hidden" name="stopdesk" id="formStopdesk" />
+        <input type="hidden" name="prix_total" id="formPrixTotal" />
+    </form>
+
     <script>
         // ═══════════════════════════════════════════════════════════════
         // CONFIGURATION
         // ═══════════════════════════════════════════════════════════════
         const PIXEL_PRODUCT_ID = 'BACHE_COUVERT_AUTO';
-        const PIXEL_PRICE_PER_UNIT = 1300;   // Facebook pixel price
-        const PRODUCT_BASE = 3200;            // Actual product price on form
+        const PIXEL_PRICE_PER_UNIT = 1300;
+        const PRODUCT_BASE = 3200;
         const PIXEL_CURRENCY = 'DZD';
 
         // ⚠️ UPDATE THIS after deploying the new Apps Script version
@@ -861,9 +867,6 @@
         let domicilePrice = 0;
         let deskPrice = 0;
 
-        const canvas = document.getElementById('totalPriceCanvas');
-        const ctx = canvas.getContext('2d');
-
         // ═══════════════════════════════════════════════════════════════
         // PRICE CALCULATIONS
         // ═══════════════════════════════════════════════════════════════
@@ -880,22 +883,35 @@
         // UI UPDATES
         // ═══════════════════════════════════════════════════════════════
         function updateUI() {
+            // Update delivery card active states
+            const cardDomicile = document.getElementById('cardDomicile');
+            const cardDesk = document.getElementById('cardDesk');
+            const radioDomicile = cardDomicile.querySelector('input[type="radio"]');
+            const radioDesk = cardDesk.querySelector('input[type="radio"]');
+
             if (deliveryType === 'domicile') {
                 currentDeliveryPrice = domicilePrice;
-                document.getElementById('cardDomicile').classList.add('active');
-                document.getElementById('cardDesk').classList.remove('active');
-                document.getElementById('cardDomicile').querySelector('input[type="radio"]').checked = true;
+                cardDomicile.classList.add('active');
+                cardDesk.classList.remove('active');
+                radioDomicile.checked = true;
+                radioDesk.checked = false;
             } else {
                 currentDeliveryPrice = deskPrice;
-                document.getElementById('cardDesk').classList.add('active');
-                document.getElementById('cardDomicile').classList.remove('active');
-                document.getElementById('cardDesk').querySelector('input[type="radio"]').checked = true;
+                cardDesk.classList.add('active');
+                cardDomicile.classList.remove('active');
+                radioDesk.checked = true;
+                radioDomicile.checked = false;
             }
 
+            // Update quantity display
             document.getElementById('qtyDisplay').textContent = currentQty;
 
+            // Update delivery price labels
             const domicileLabel = document.getElementById('domicilePriceLabel');
             const deskLabel = document.getElementById('deskPriceLabel');
+            const domicileVal = document.getElementById('domicilePriceVal');
+            const deskVal = document.getElementById('deskPriceVal');
+
             if (currentQty >= 2) {
                 domicileLabel.innerHTML = '✅ <strong style="color:green;">مجاني</strong>';
                 deskLabel.innerHTML = '✅ <strong style="color:green;">مجاني</strong>';
@@ -904,47 +920,28 @@
                 deskLabel.innerHTML = '+ <strong id="deskPriceVal">' + deskPrice + '</strong> دج';
             }
 
-            renderTotalPrice();
+            // Update total price
+            updateTotalPrice();
         }
 
-        function renderTotalPrice() {
+        function updateTotalPrice() {
             const total = getTotalPrice(currentQty, currentDeliveryPrice);
-            const w = canvas.width;
-            const h = canvas.height;
-            ctx.clearRect(0, 0, w, h);
-            const grad = ctx.createLinearGradient(0, 0, w, 0);
-            grad.addColorStop(0, '#F5C518');
-            grad.addColorStop(1, '#E8A800');
-            ctx.fillStyle = grad;
-            ctx.shadowColor = 'rgba(245,197,24,0.35)';
-            ctx.shadowBlur = 20;
-            ctx.beginPath();
-            ctx.roundRect(0, 0, w, h, 12);
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = 'rgba(255,255,255,0.12)';
-            ctx.beginPath();
-            ctx.roundRect(4, 4, w - 8, h - 8, 10);
-            ctx.fill();
-            ctx.fillStyle = 'rgba(10,22,40,0.6)';
-            ctx.font = 'bold 16px Cairo, sans-serif';
-            ctx.textAlign = 'right';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('المجموع الكامل', w - 20, 28);
-            ctx.fillStyle = '#0A1628';
-            ctx.font = 'bold 38px Cairo, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(total.toLocaleString('fr-DZ') + ' دج', w / 2, 50);
-            ctx.fillStyle = 'rgba(10,22,40,0.5)';
-            ctx.font = 'bold 14px Cairo, sans-serif';
-            ctx.textAlign = 'left';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('دج', 20, 50);
+            const totalEl = document.getElementById('totalPriceValue');
+            if (totalEl) {
+                totalEl.textContent = total.toLocaleString('fr-DZ');
+            }
         }
 
         // ═══════════════════════════════════════════════════════════════
-        // EVENT LISTENERS
+        // DELIVERY SELECTION
+        // ═══════════════════════════════════════════════════════════════
+        function selectDelivery(type) {
+            deliveryType = type;
+            updateUI();
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // WILAYA CHANGE
         // ═══════════════════════════════════════════════════════════════
         document.getElementById('wilaya').addEventListener('change', function() {
             const val = this.value;
@@ -966,23 +963,9 @@
             }
         });
 
-        document.getElementById('cardDomicile').addEventListener('click', function(e) {
-            if (e.target.tagName === 'INPUT') return;
-            deliveryType = 'domicile';
-            updateUI();
-        });
-        document.getElementById('cardDesk').addEventListener('click', function(e) {
-            if (e.target.tagName === 'INPUT') return;
-            deliveryType = 'desk';
-            updateUI();
-        });
-        document.querySelectorAll('input[name="deliveryType"]').forEach(r => {
-            r.addEventListener('change', function() {
-                deliveryType = this.value;
-                updateUI();
-            });
-        });
-
+        // ═══════════════════════════════════════════════════════════════
+        // QUANTITY
+        // ═══════════════════════════════════════════════════════════════
         function changeQty(delta) {
             const newQty = Math.max(1, Math.min(10, currentQty + delta));
             if (newQty !== currentQty) {
@@ -992,6 +975,9 @@
             }
         }
 
+        // ═══════════════════════════════════════════════════════════════
+        // SCROLL TO FORM
+        // ═══════════════════════════════════════════════════════════════
         function scrollToForm(e) {
             e.preventDefault();
             document.getElementById('cod-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1005,7 +991,7 @@
             const phone = document.getElementById('phone').value.trim();
             const wilaya = document.getElementById('wilaya').value;
 
-            const phoneRx = /^(05|06|07)\d{8}$/;
+            const phoneRx = /^(05|06|07)[0-9]{8}$/;
             if (!phoneRx.test(phone)) {
                 document.getElementById('phone').classList.add('error');
                 document.getElementById('phoneErr').classList.add('show');
@@ -1048,19 +1034,19 @@
 
                 xhr.onload = function() {
                     if (xhr.status >= 200 && xhr.status < 300) {
-                        console.log('✅ Telegram sent to bot', bot.chat);
+                        console.log('Telegram sent to bot', bot.chat);
                         resolve({ success: true, bot: bot.chat });
                     } else {
-                        console.error('❌ Telegram HTTP error for bot', bot.chat, 'Status:', xhr.status);
+                        console.error('Telegram HTTP error for bot', bot.chat, 'Status:', xhr.status);
                         resolve({ success: false, bot: bot.chat, error: 'HTTP ' + xhr.status });
                     }
                 };
                 xhr.onerror = function() {
-                    console.error('❌ Telegram network error for bot', bot.chat);
+                    console.error('Telegram network error for bot', bot.chat);
                     resolve({ success: false, bot: bot.chat, error: 'network' });
                 };
                 xhr.ontimeout = function() {
-                    console.error('⏱️ Telegram timeout for bot', bot.chat);
+                    console.error('Telegram timeout for bot', bot.chat);
                     resolve({ success: false, bot: bot.chat, error: 'timeout' });
                 };
                 xhr.send(JSON.stringify(payload));
@@ -1068,10 +1054,9 @@
         }
 
         // ═══════════════════════════════════════════════════════════════
-        // SHEETS SUBMISSION — Hidden Form POST to Iframe (RELIABLE)
+        // SHEETS SUBMISSION — Hidden Form POST to Iframe
         // ═══════════════════════════════════════════════════════════════
         function submitToSheets(data) {
-            // Populate the hidden form fields
             document.getElementById('formDate').value = data.date;
             document.getElementById('formClient').value = data.client;
             document.getElementById('formTelephone').value = data.telephone;
@@ -1088,11 +1073,9 @@
             document.getElementById('formStopdesk').value = data.stopdesk;
             document.getElementById('formPrixTotal').value = data.prix_total;
 
-            // Submit the form — this fires the POST to Apps Script
-            // The iframe captures the response. We don't wait for it.
             document.getElementById('sheetsForm').submit();
 
-            console.log('✅ Form submitted to Sheets via hidden iframe');
+            console.log('Form submitted to Sheets via hidden iframe');
             return { success: true, method: 'form-post-iframe' };
         }
 
@@ -1114,15 +1097,10 @@
             const wilayaEl = document.getElementById('wilaya');
             const wilayaText = wilayaEl.options[wilayaEl.selectedIndex].text;
             const total = getTotalPrice(currentQty, currentDeliveryPrice);
-            const productPrice = getProductPrice(currentQty);
             const now = new Date();
             const dateStr = now.toLocaleDateString('fr-DZ') + ' ' + now.toLocaleTimeString('fr-DZ');
             const customerName = document.getElementById('fullName').value.trim();
             const customerPhone = document.getElementById('phone').value.trim();
-            const customerPhone2 = '';
-            const customerCommune = '';
-            const customerAdresse = '';
-            const customerRemarque = '';
 
             const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
             const reductionAmount = (currentQty >= 2) ? currentDeliveryPrice : 0;
@@ -1131,37 +1109,34 @@
             const deliveryTypeText = deliveryType === 'domicile' ? 'توصيل للمنزل 🏠' : 'Stop Desk 📦';
             const freeDeliveryText = (currentQty >= 2) ? '✅ مجاني (2+ قطع)' : effectiveDelivery.toLocaleString('fr-DZ') + ' دج';
 
-            // ── Build Telegram message ──
-            const message = `
-🛒 <b>طلب جديد — Bâche Couvert Automobile</b>
+            // Build Telegram message
+            const message = [
+                '🛒 <b>طلب جديد — Bâche Couvert Automobile</b>',
+                '',
+                '📱 <b>رقم الهاتف:</b> ' + customerPhone,
+                '👤 <b>الاسم الكامل:</b> ' + (customerName || '—'),
+                '📍 <b>الولاية:</b> ' + wilayaText,
+                '🏷️ <b>SKU:</b> BCA',
+                '🚚 <b>نوع التوصيل:</b> ' + deliveryTypeText,
+                '📦 <b>الكمية:</b> ' + currentQty,
+                '💰 <b>سعر المنتج (للوحدة):</b> ' + PRODUCT_BASE.toLocaleString('fr-DZ') + ' دج',
+                '🚚 <b>سعر التوصيل:</b> ' + freeDeliveryText,
+                '💵 <b>المجموع الكلي:</b> ' + total.toLocaleString('fr-DZ') + ' دج',
+                '📅 <b>تاريخ الطلب:</b> ' + dateStr,
+                '🔗 <b>المصدر:</b> ' + REFERENT_SOURCE
+            ].join('
+');
 
-📱 <b>رقم الهاتف:</b> ${customerPhone}${customerPhone2 ? '
-📱 <b>رقم هاتف إضافي:</b> ' + customerPhone2 : ''}
-👤 <b>الاسم الكامل:</b> ${customerName || '—'}
-📍 <b>الولاية:</b> ${wilayaText}${customerCommune ? '
-🏘️ <b>البلدية:</b> ' + customerCommune : ''}${customerAdresse ? '
-🏠 <b>العنوان:</b> ' + customerAdresse : ''}
-🏷️ <b>SKU:</b> BCA
-🚚 <b>نوع التوصيل:</b> ${deliveryTypeText}
-📦 <b>الكمية:</b> ${currentQty}
-💰 <b>سعر المنتج (للوحدة):</b> ${PRODUCT_BASE.toLocaleString('fr-DZ')} دج
-🚚 <b>سعر التوصيل:</b> ${freeDeliveryText}
-💵 <b>المجموع الكلي:</b> ${total.toLocaleString('fr-DZ')} دج${customerRemarque ? '
-📝 <b>ملاحظة:</b> ' + customerRemarque : ''}
-📅 <b>تاريخ الطلب:</b> ${dateStr}
-🔗 <b>المصدر:</b> ${REFERENT_SOURCE}
-            `.trim();
-
-            // ── Build Sheets payload ──
+            // Build Sheets payload
             const sheetsPayload = {
                 date: dateStr,
                 client: customerName || '',
                 telephone: customerPhone,
-                telephone2: customerPhone2,
+                telephone2: '',
                 wilaya: wilayaText,
-                commune: customerCommune,
-                adresse: customerAdresse,
-                remarque: customerRemarque,
+                commune: '',
+                adresse: '',
+                remarque: '',
                 produit_sku: 'BCA',
                 quantite: currentQty,
                 prix_unitaire: PRODUCT_BASE,
@@ -1172,39 +1147,32 @@
                 prix_total: total
             };
 
-            // ── Send everything in parallel ──
+            // Send everything
             const results = [];
 
             try {
-                // 1. Sheets via hidden form (always fires, no CORS issues)
                 const sheetsResult = submitToSheets(sheetsPayload);
                 results.push({ service: 'sheets', ...sheetsResult });
 
-                // 2. Telegram Bot 1
                 const bot1Promise = sendToBot(BOT_1, message).then(r => {
                     results.push({ service: 'telegram1', ...r });
                 });
 
-                // 3. Telegram Bot 2
                 const bot2Promise = sendToBot(BOT_2, message).then(r => {
                     results.push({ service: 'telegram2', ...r });
                 });
 
                 await Promise.allSettled([bot1Promise, bot2Promise]);
 
-                console.log('📊 All send results:', results);
+                console.log('All send results:', results);
 
             } catch (e) {
-                console.error('❌ Overall send error:', e);
+                console.error('Overall send error:', e);
             }
 
-            // Track purchase pixel
             trackPurchase(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText);
 
-            // Show success immediately
             showSuccess();
-
-            // Reset button
             btn.disabled = false;
             btn.innerHTML = '<span>🖱️ إضغط هنا لإرسال طلبك</span>';
         }
@@ -1214,16 +1182,25 @@
         // ═══════════════════════════════════════════════════════════════
         function showSuccess() {
             document.getElementById('successPopup').classList.add('active');
-            document.getElementById('orderForm').reset();
+
+            // Reset visible form inputs
+            document.getElementById('phone').value = '';
+            document.getElementById('fullName').value = '';
+            document.getElementById('wilaya').value = '';
+
+            // Reset state
             currentQty = 1;
             currentDeliveryPrice = 0;
             domicilePrice = 0;
             deskPrice = 0;
             deliveryType = 'domicile';
+
+            // Reset UI
             document.getElementById('qtyDisplay').textContent = '1';
-            document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(el => {
+            document.querySelectorAll('.form-input, .form-select').forEach(el => {
                 el.classList.remove('valid', 'error');
             });
+
             updateUI();
         }
 
@@ -1241,22 +1218,6 @@
         document.getElementById('phone').addEventListener('input', function() {
             this.value = this.value.replace(/[^0-9]/g, '');
         });
-
-        // ═══════════════════════════════════════════════════════════════
-        // CANVAS POLYFILL
-        // ═══════════════════════════════════════════════════════════════
-        if (!CanvasRenderingContext2D.prototype.roundRect) {
-            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
-                if (r > w / 2) r = w / 2;
-                if (r > h / 2) r = h / 2;
-                this.moveTo(x + r, y);
-                this.arcTo(x + w, y, x + w, y + h, r);
-                this.arcTo(x + w, y + h, x, y + h, r);
-                this.arcTo(x, y + h, x, y, r);
-                this.arcTo(x, y, x + w, y, r);
-                return this;
-            };
-        }
 
         // ═══════════════════════════════════════════════════════════════
         // FLOATING CTA OBSERVER
