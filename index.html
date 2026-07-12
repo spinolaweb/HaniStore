@@ -103,8 +103,8 @@
             overflow: hidden; position: relative; background: var(--navy);
         }
         .long-img-frame {
-            width: 100%; max-width: 480px; aspect-ratio: 1089 / 7200;
-            overflow: hidden; position: relative; background: var(--navy);
+            width: 100%; max-width: 480px;
+            overflow: visible; position: relative; background: var(--navy);
         }
         .fullscreen-img {
             width: 100%; height: 100%; object-fit: cover; object-position: center;
@@ -112,7 +112,7 @@
             transform: scale(1.015);
         }
         .long-img-frame .fullscreen-img {
-            height: auto; object-fit: contain; transform: none;
+            height: auto; width: 100%; object-fit: initial; transform: none;
         }
         .fullscreen-img.loaded { opacity: 1; transform: scale(1); }
         .float-btn {
