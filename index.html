@@ -102,10 +102,17 @@
             width: 100%; max-width: 480px; aspect-ratio: 9 / 16;
             overflow: hidden; position: relative; background: var(--navy);
         }
+        .long-img-frame {
+            width: 100%; max-width: 480px; aspect-ratio: 1089 / 7200;
+            overflow: hidden; position: relative; background: var(--navy);
+        }
         .fullscreen-img {
             width: 100%; height: 100%; object-fit: cover; object-position: center;
             display: block; opacity: 0; transition: opacity 0.5s ease, transform 0.6s ease;
             transform: scale(1.015);
+        }
+        .long-img-frame .fullscreen-img {
+            height: auto; object-fit: contain; transform: none;
         }
         .fullscreen-img.loaded { opacity: 1; transform: scale(1); }
         .float-btn {
@@ -268,55 +275,18 @@
 </head>
 <body>
 
-    <!-- REAL PRODUCT PHOTO -->
+    <!-- SINGLE LONG VERTICAL COLLAGE IMAGE (1089x7200) — contains all product visuals -->
     <section class="img-section">
-      <div class="img-frame">
-        <img class="fullscreen-img" src="bache.webp" alt="صورة حقيقية للمنتج"
+      <div class="long-img-frame">
+        <img class="fullscreen-img" src="bache.webp" alt="Bâche Couvert Automobile"
              loading="eager" fetchpriority="high" decoding="async"
              onload="this.classList.add('loaded')"
              onerror="this.style.background='linear-gradient(135deg, #0A1628, #122040)'; this.classList.add('loaded')" />
+        <span class="fb-price" aria-label="1300 DZD" data-price="1300">1300 دج</span>
       </div>
     </section>
 
     <a class="float-btn" id="floatCta" onclick="scrollToForm(event)" href="#cod-form">⬇️ إسحب إلى الأسفل لمزيد من التفاصيل حول المنتج</a>
-
-    <section class="img-section">
-      <div class="img-frame">
-        <img class="fullscreen-img" src="bache.webp" alt="Bâche Couvert"
-             loading="lazy" decoding="async"
-             onload="this.classList.add('loaded')"
-             onerror="this.style.background='linear-gradient(135deg, #0A1628, #122040)'; this.classList.add('loaded')" />
-        <span class="fb-price" aria-label="1300 DZD" data-price="1300">1300 دج</span>
-      </div>
-    </section>
-
-    <section class="img-section">
-      <div class="img-frame">
-        <img class="fullscreen-img" src="bache.webp" alt="المشكلة والحل"
-             loading="lazy" decoding="async" fetchpriority="low"
-             onload="this.classList.add('loaded')"
-             onerror="this.style.background='#0A1628'; this.classList.add('loaded')" />
-      </div>
-    </section>
-
-    <section class="img-section">
-      <div class="img-frame">
-        <img class="fullscreen-img" src="bache.webp" alt="المميزات"
-             loading="lazy" decoding="async" fetchpriority="low"
-             onload="this.classList.add('loaded')"
-             onerror="this.style.background='linear-gradient(135deg, #fafbff, #f0f4ff)'; this.classList.add('loaded')" />
-      </div>
-    </section>
-
-    <section class="img-section">
-      <div class="img-frame">
-        <img class="fullscreen-img" src="bache.webp" alt="العرض"
-             loading="lazy" decoding="async" fetchpriority="low"
-             onload="this.classList.add('loaded')"
-             onerror="this.style.background='#0A1628'; this.classList.add('loaded')" />
-        <span class="fb-price" aria-label="1300 DZD" data-price="1300">1300 دج</span>
-      </div>
-    </section>
 
     <!-- COD FORM -->
     <section class="cod-section" id="cod-form">
